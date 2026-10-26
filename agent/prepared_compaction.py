@@ -9,7 +9,8 @@ compressor are untouched, so the prompt cache is too.
 
 At the next automatic threshold compaction ``compress`` takes the completed
 summary if the messages it covers are still the same messages: same session,
-same head boundary, a boundary no later than the current tail cut, and the same
+same head boundary, a boundary no later than the current tail cut (or past it
+only by tool calls and results), and the same
 message structure (roles, tool call and result ids) up to that boundary, each
 message vouched for by its durable ``message_uid``. The text of a persisted
 message is not compared: plugins rewrite text in place, and a summary written
@@ -144,6 +145,19 @@ class _PendingPass:
             hook(seconds)
 
 
+def _tool_traffic(msg: Any) -> bool:
+    """A tool result, or an assistant row that only calls tools (no visible text)."""
+    if not isinstance(msg, dict):
+        return False
+    if msg.get("role") == "tool":
+        return True
+    content = msg.get("content")
+    text = content if isinstance(content, str) else "".join(
+        part.get("text", "") if isinstance(part, dict) else str(part) for part in content or []
+    )
+    return msg.get("role") == "assistant" and bool(msg.get("tool_calls")) and not text.strip()
+
+
 def _message_identity(msg: Any) -> _Identity:
     """Role, tool call ids/names and tool result ids; the durable ``message_uid`` when the message has
     been persisted; and a digest of its text for messages no uid vouches for. Tool arguments and result
@@ -184,7 +198,10 @@ def _mismatch(
         return _Miss("other_session", "another session")
     if window.compress_start != start:
         return _Miss("head_moved", f"head moved ({window.compress_start} -> {start})")
-    if window.compress_end > end:
+    # The cut can move back past the boundary (the prune made tail rows cheaper, tool-group alignment);
+    # the summary still splices if that covers only tool calls and results the fresh plan kept: never a
+    # user turn or visible assistant text (the plan anchors the last reply in the tail, #29824).
+    if window.compress_end > end and not all(_tool_traffic(m) for m in messages[end:window.compress_end]):
         return _Miss("inside_tail", f"prepared boundary {window.compress_end} is inside the protected tail (cut {end})")
     if window.compress_end > len(messages):
         return _Miss("transcript_shorter", "transcript shorter than the prepared window")

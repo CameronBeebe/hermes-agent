@@ -377,6 +377,26 @@ def test_identity_survives_a_session_db_round_trip_and_catches_a_rewind(tmp_path
     assert "different message" in pc._mismatch(window, rewound, "S1", 4, 15)
 
 
+_TOOL_CALL = {"role": "assistant", "content": "", "tool_calls": [
+    {"id": "c1", "type": "function", "function": {"name": "read_file", "arguments": "{}"}}]}
+_TOOL_RESULT = {"role": "tool", "tool_call_id": "c1", "content": "result"}
+
+
+@pytest.mark.parametrize(("between", "splices"), [
+    ([_TOOL_CALL, _TOOL_RESULT], True),
+    ([{"role": "assistant", "content": "visible reply"}], False),
+    ([{"role": "user", "content": "new request"}], False),
+], ids=["tool-traffic", "assistant-reply", "user-turn"])
+def test_boundary_past_the_cut_splices_only_over_tool_traffic(between, splices):
+    """The cut can move back past the summary's boundary; splicing then summarises those rows, which is
+    only allowed for tool calls and results, never a user turn or a reply the fresh plan keeps verbatim."""
+    msgs = _messages(10) + between + _messages(4, tag="t")[1:]
+    start, cut = 2, 11
+    boundary = cut + len(between)
+    window = pc._Window("S1", start, boundary, pc.prefix_identities(msgs, boundary))
+    assert (pc._mismatch(window, msgs, "S1", start, cut) is None) is splices
+
+
 # --------------------------------------------------------------------------- running passes
 
 
