@@ -328,6 +328,9 @@ def redact_tool_args_for_display(tool_name: str, args: dict | None) -> dict | No
     """Return a copy of tool args safe for logs/progress UI (masks ``browser_type`` secrets)."""
     if not isinstance(args, dict):
         return args
+    if tool_name == "read_file" and "declared_intent" in args:
+        # Metadata stays in transcripts/hooks, not in terminal markup or progress UI.
+        return {key: value for key, value in args.items() if key != "declared_intent"}
     if tool_name == "browser_type" and isinstance(args.get("text"), str):
         return {**args, "text": redact_sensitive_text(args["text"], force=True)}
     return args

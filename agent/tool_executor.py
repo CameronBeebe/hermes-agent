@@ -730,6 +730,12 @@ def _dispatch_authorized_once(
             }
             block_error_type = _PRUNED_TOOL_ARGUMENTS_ERROR
 
+    if block_body is None:
+        from agent.read_file_intent import declared_intent_error
+        intent_error = declared_intent_error(agent, ref.name, ref.args)
+        if intent_error is not None:
+            block_body, block_error_type = {"error": intent_error}, "invalid_declared_intent"
+
     guardrail_decision = None
     if block_body is None:
         guardrail_decision = agent._tool_guardrails.before_call(ref.name, ref.args)
@@ -1017,7 +1023,7 @@ def _safe_callback(callback, label: str, *args, **kwargs) -> None:
 def _begin_tool_execution(agent, ref: _ToolCallRef, display_index: int | None) -> None:
     """Run user-visible and checkpoint preflight on final tool arguments."""
     function_name, function_args, effective_task_id, tool_call_id = ref.name, ref.args, ref.task_id, ref.call_id
-    display_args = _redact_tool_args_for_display(function_name, function_args) or function_args
+    display_args = _redact_tool_args_for_display(function_name, function_args) or {}
     if _tool_progress_enabled(agent):
         prefix = f"Tool {display_index}" if display_index is not None else "Tool"
         if agent.verbose_logging:
@@ -1058,7 +1064,7 @@ def _emit_tool_complete_and_risk(agent, ref: _ToolCallRef, result, risk_metadata
     """Fire ``tool_complete_callback`` (unless blocked) then the ``tool.output_risk`` projection."""
     if not blocked and agent.tool_complete_callback:
         try:
-            display_args = _redact_tool_args_for_display(ref.name, ref.args) or ref.args
+            display_args = _redact_tool_args_for_display(ref.name, ref.args) or {}
         except Exception as cb_err:
             logging.debug("Tool complete callback error: %s", cb_err)
         else:
@@ -1163,7 +1169,7 @@ def _commit_tool_result(
     prepare_metadata = getattr(agent, "tool_result_metadata_callback", None)
     if not blocked and prepare_metadata:
         try:
-            display_args = _redact_tool_args_for_display(function_name, function_args) or function_args
+            display_args = _redact_tool_args_for_display(function_name, function_args) or {}
             metadata = prepare_metadata(tool_call_id, function_name, display_args, function_result)
             if metadata:
                 tool_message["display_metadata"] = metadata
@@ -1639,7 +1645,7 @@ def _start_quiet_tool_spinner(agent, function_name: str, function_args: dict, *,
         return None
     face = random.choice(KawaiiSpinner.get_waiting_faces())
     if label is None:
-        display_args = _redact_tool_args_for_display(function_name, function_args) or function_args
+        display_args = _redact_tool_args_for_display(function_name, function_args) or {}
         label = f"{_tool_row_emoji(function_name, display_args)} {_build_tool_label(function_name, display_args) or function_name}"
     spinner = KawaiiSpinner(f"{face} {label}", spinner_type='dots', print_fn=agent._print_fn)
     spinner.start()
