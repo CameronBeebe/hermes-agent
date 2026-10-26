@@ -324,13 +324,32 @@ def _read_file_line_label(args: dict) -> str:
     return f"L{offset}-{offset + limit - 1}" if isinstance(limit, int) and limit > 1 else f"L{offset}"
 
 
+def _read_intent_for_display(value: Any) -> str:
+    """Bound untrusted metadata for plain-text AND markup consumers, idempotently."""
+    from hermes_cli.config_effective import load_user_config_effective
+
+    if not isinstance(value, str):
+        return ""
+    config = load_user_config_effective()
+    if (config.get("display") or {}).get("read_file_declared_intent", False) is not True:
+        return ""
+    # Printable bracket lookalikes cannot open Rich tags (even after truncation or
+    # repeated redaction). Nonprintables include ANSI controls and bidi overrides.
+    text = "".join(c if c.isprintable() else " " for c in value)
+    text = " ".join(text.split()).translate(str.maketrans({"[": "［", "]": "］"}))
+    return text[:79] + "…" if len(text) > 80 else text
+
+
 def redact_tool_args_for_display(tool_name: str, args: dict | None) -> dict | None:
     """Return a copy of tool args safe for logs/progress UI (masks ``browser_type`` secrets)."""
     if not isinstance(args, dict):
         return args
     if tool_name == "read_file" and "declared_intent" in args:
-        # Metadata stays in transcripts/hooks, not in terminal markup or progress UI.
-        return {key: value for key, value in args.items() if key != "declared_intent"}
+        display_args = {key: value for key, value in args.items() if key != "declared_intent"}
+        intent = _read_intent_for_display(args["declared_intent"])
+        if intent:
+            display_args["declared_intent"] = intent
+        return display_args
     if tool_name == "browser_type" and isinstance(args.get("text"), str):
         return {**args, "text": redact_sensitive_text(args["text"], force=True)}
     return args
@@ -416,7 +435,11 @@ def _preview_shell(key: str):
 def _preview_read_file(args: dict, max_len: int) -> str | None:
     path = args.get("path") or args.get("file") or args.get("filepath")
     label = (Path(str(path).replace("\\", "/")).name or str(path)) if path is not None else None
-    return None if label is None else _tail_trunc(f"{label} {_read_file_line_label(args)}".strip(), max_len) or None
+    preview = f"{label} {_read_file_line_label(args)}".strip() if label is not None else ""
+    intent = args.get("declared_intent")
+    if intent:
+        preview = f"{preview} — {intent}" if preview else intent
+    return _tail_trunc(preview, max_len) or None
 
 
 def _memory_first_op(args: dict) -> tuple[dict, str]:
@@ -494,7 +517,7 @@ def build_tool_preview(tool_name: str, args: dict, max_len: int | None = None) -
         max_len = _tool_preview_max_len
     if not args:
         return None
-    args = redact_tool_args_for_display(tool_name, args) or args
+    args = redact_tool_args_for_display(tool_name, args) or {}
     builder = _PREVIEW_BUILDERS.get(tool_name)
     if builder is not None:
         return builder(args, max_len)
@@ -1128,7 +1151,7 @@ def get_tool_row_parts(tool_name: str, args: dict | None, result: str | None = N
     uses, without its padding. ``failure`` is None for a row that succeeded, else that row's
     suffix (``" [exit 1]"``, possibly ``""``); batch calls mark the entry that failed."""
     try:
-        args = redact_tool_args_for_display(tool_name, args) or args or {}
+        args = redact_tool_args_for_display(tool_name, args) or {}
         is_failure, suffix = _detect_tool_failure(tool_name, result)
         call_failure = suffix if is_failure else ("" if is_error else None)
         labels = bridge_tool_labels(tool_name, args)
@@ -1321,7 +1344,7 @@ def _bridge_row_suffixes(rows: int, result: Any, call_suffix: str) -> list[str]:
 
 
 def _get_cute_tool_message(tool_name: str, args: dict, duration: float, result: str | None = None) -> str:
-    args = redact_tool_args_for_display(tool_name, args) or args
+    args = redact_tool_args_for_display(tool_name, args) or {}
     is_failure, failure_suffix = _detect_tool_failure(tool_name, result)
     render = _CUTE_LINES.get(tool_name)
     rows = _cute_bridge_rows(tool_name, args)

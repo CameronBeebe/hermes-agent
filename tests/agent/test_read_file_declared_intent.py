@@ -169,6 +169,28 @@ def test_resume_uses_pinned_contract_not_new_config(tmp_path, enabled):
         assert result["content"] == "1|resume fixture"
 
 
+@pytest.mark.parametrize("enabled", [False, True])
+@pytest.mark.parametrize("preserve_prefix", [False, True])
+def test_restored_contract_survives_content_aware_refresh(tmp_path, enabled, preserve_prefix):
+    from tools.mcp_tool_agent import refresh_agent_mcp_tools, restore_agent_tool_prefix, tool_pin_version
+
+    _configure(enabled)
+    original = _surface()
+    saved = {"version": tool_pin_version(), "tools": copy.deepcopy(original.tools)}
+    _configure(not enabled)
+    agent = _agent()
+    restore_agent_tool_prefix(agent, saved)
+    before = copy.deepcopy(_read_schema(agent))
+    refresh_agent_mcp_tools(agent, content_aware=True, preserve_prefix=preserve_prefix)
+    assert _read_schema(agent) == before
+    path = tmp_path / "refreshed.txt"
+    path.write_text("original fixture", encoding="utf-8")
+    result = json.loads(_execute(agent, [{"path": str(path)}])[-1]["content"])
+    assert ("error" in result) is enabled
+    if not enabled:
+        assert result["content"] == "1|original fixture"
+
+
 @pytest.mark.parametrize("mode", ["sequential", "concurrent"])
 def test_off_reads_without_intent_and_does_not_validate_extra_metadata(tmp_path, mode):
     agent = _agent()
@@ -246,3 +268,38 @@ def test_mixed_batch_rejects_only_invalid_call_and_keeps_correlation(tmp_path, m
         assert by_id[f"read-{i}"]["args"] == args
     assert by_id["read-0"]["error_type"] == "invalid_declared_intent"
     assert by_id["read-2"]["error_type"] == "invalid_declared_intent"
+
+
+@pytest.mark.parametrize("mode", ["sequential", "concurrent"])
+@pytest.mark.parametrize("stage", ["hook", "middleware"])
+@pytest.mark.parametrize("valid", [False, True])
+def test_validation_uses_replacement_intent(tmp_path, monkeypatch, mode, stage, valid):
+    from hermes_cli.plugins import get_plugin_manager
+    from tools import file_tools
+
+    _configure(True)
+    agent = _agent()
+    path = tmp_path / "replacement.txt"
+    path.write_text("replacement fixture", encoding="utf-8")
+    replacement = "Inspect replacement fixture" if valid else " \n"
+    original = "" if valid else "Inspect original fixture"
+    if stage == "hook":
+        monkeypatch.setitem(get_plugin_manager()._hooks, "pre_tool_call", [
+            lambda **kw: {"action": "modify", "args": {**kw["args"], "declared_intent": replacement}},
+        ])
+    else:
+        monkeypatch.setattr("hermes_cli.middleware.apply_tool_request_middleware",
+                            lambda name, args, **kw: SimpleNamespace(
+                                payload={**args, "declared_intent": replacement}, trace=[]))
+    posts = []
+    monkeypatch.setitem(get_plugin_manager()._hooks, "post_tool_call", [lambda **kw: posts.append(kw)])
+    with patch.object(file_tools, "read_file_tool", wraps=file_tools.read_file_tool) as reader:
+        messages = _execute(agent, [{"path": str(path), "declared_intent": original}], mode)
+    result = json.loads(messages[-1]["content"])
+    assert reader.call_count == int(valid)
+    if valid:
+        assert result["content"] == "1|replacement fixture"
+    else:
+        assert "declared_intent" in result["error"]
+    assert posts[0]["args"]["declared_intent"] == replacement
+    assert posts[0]["tool_call_id"] == "read-0"

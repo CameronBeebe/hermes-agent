@@ -6,6 +6,14 @@ from copy import deepcopy
 def intent_tool_schemas(agent, tools: list[dict]) -> list[dict]:
     """Copy only read_file's schema, pinning opt-in at the first surface build."""
     enabled = getattr(agent, "_read_file_declared_intent", None)
+    # Resume may replace constructor schemas with a saved prefix. The carried
+    # contract, not current config or the constructor's flag, governs refreshes.
+    for tool in getattr(agent, "tools", []) or []:
+        function = tool.get("function", {})
+        if function.get("name") == "read_file":
+            enabled = "declared_intent" in function.get("parameters", {}).get("required", [])
+            agent._read_file_declared_intent = enabled
+            break
     if not isinstance(enabled, bool):
         from hermes_cli.config_effective import load_user_config_effective
 

@@ -90,9 +90,24 @@ The objective remains in the original assistant tool-call arguments and existing
 pre/post tool hooks, correlated by tool-call ID; normal session persistence stores
 those arguments in SQLite. Treat it as untrusted model text, not verified intent.
 Do not put secrets in it. Existing transcript redaction and retention still apply.
-It is hidden from the CLI activity/progress argument display (including verbose
-progress); this slice does not add a display toggle. Raw transcripts and plugin
-hooks still contain it, and other transcript viewers must render it safely.
+It is hidden from activity/progress displays by default (including verbose
+arguments). Independently opt in to a short objective in the classic CLI spinner
+and completed tool rows:
+
+```bash
+hermes config set display.read_file_declared_intent true
+```
+
+For example: `read config.yaml L1 — Identify configuration defaults`. This display
+setting does not require or add an objective to the model-facing schema; it only
+shows one when supplied. It can change without rebuilding the session's cached
+tool contract. Set it to `false` to hide objectives again. The shared progress
+helpers and start/completion/metadata callbacks receive only the display-safe copy:
+at most 80 characters (including an ellipsis), collapsed whitespace, nonprintable
+controls/bidi formatting replaced with spaces, and square brackets replaced with
+literal fullwidth lookalikes so Rich cannot interpret markup. The ordinary preview
+length setting can shorten the label further. Raw tool-call arguments, plugin hooks,
+and file results are unchanged; transcript viewers must still render raw text safely.
 
 **Limitations:** this is metadata foundation only, not an authorization boundary,
 a classifier, or evidence that the objective was fulfilled. It does not require

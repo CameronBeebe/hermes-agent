@@ -914,9 +914,9 @@ DEFAULT_CONFIG = {
         # display.tool_progress_overrides is deprecated (use display.platforms); a user-set value is
         # still honored at runtime and folded into platforms by migration.
         "tool_preview_length": 0,  # max chars for tool call previews (0 = no limit)
-        # Human-phrased status labels for built-in tools ("Reading <file>") in CLI spinner and
-        # gateway/desktop tool-progress; custom/plugin/MCP tools use the raw preview.
+        # Friendly built-in labels ("Reading <file>"); custom/plugin/MCP tools use the raw preview.
         "friendly_tool_labels": True,
+        "read_file_declared_intent": False,  # Safe, short objectives in progress; independent of agent schema.
         # CLI-only post-turn line: "⋯ 12.4s · edited 2 files +18 -3 · read 4 files · ran 3
         # commands". Never in quiet/non-interactive or gateway surfaces (own footer).
         "turn_summary": True,
