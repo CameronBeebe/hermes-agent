@@ -1,0 +1,61 @@
+{
+  "name": "atlas-retention",
+  "path": "atlas-retention.md",
+  "task": "When and how may an operator delete a routine Atlas export, how is the interval counted, and what changes for a HOLD archive?",
+  "intent": "Collect the exact operating rule, supporting definitions, prerequisites and applicable exceptions; omit unrelated operations.",
+  "text": "## Atlas archive retention\nFor a routine Atlas export, retain the completed archive for 21 clear days after the close marker, then remove it with atlas archive prune --closed.\n\n## Design assets\nThe communications team keeps vector icons, event photographs and slide templates in the brand archive. Screenshots should use the current blue theme and the standard rounded frame. Asset exports are named by campaign and language. Reviewers compare color contrast on the light and dark backgrounds. The monthly design meeting chooses illustrations for the public status page. None of these files configure the running service. Keep original artwork separate from compressed newsletter attachments. A design review is complete when the art director records approval in the editorial calendar.\n\n## Receipt prerequisite\nBefore pruning an Atlas archive, verify that its receipt is mirrored to both ledger sites and record the receipt identifier in the change ticket.\n\n## Office logistics\nThe facilities desk assigns visitor badges and maintains the seating map. Deliveries go to the east entrance before reception closes. The kitchen inventory lists mugs, coffee filters, cleaning cloths and spare water bottles. Employees book meeting rooms by local office time, with remote attendees receiving a video link. At the end of an event, return borrowed cables and adapters to the storage cabinet. Lost property remains with reception for one month. The bicycle room uses a separate access list, maintained by the building manager rather than the infrastructure team.\n\n## Training calendar\nThe enablement group runs introductory workshops, writing clinics and presentation rehearsals. Training materials are reviewed quarterly for broken links and outdated screenshots. A volunteer host opens each session, records attendance and gathers anonymous feedback. Participants can request captions or an alternate session time. Completion certificates refer only to attendance and do not grant operational permissions. The calendar includes a reading club and a peer mentoring hour. Facilitators publish slides after the session and remove duplicate attachments from the announcement thread.\n\n## Calendar vocabulary\nA clear day is a full UTC calendar day after the close marker; the day containing the marker is not counted.\n\n## Historical migration\nAn earlier stationery migration replaced the printed handbook with a searchable wiki. The project inventory covered binders, desk labels and the mailing list used to announce revisions. Historical dates in that inventory describe editorial work, not production deployments. The archived checklist remains useful to historians but is not an active operating procedure. Editors preserve original spellings in quoted correspondence and add errata in a separate index. Bibliographic citations use the original page numbers. Printed copies are stored in the library cabinet with the rest of the office archive.\n\n## Community showcase\nThe community program collects demonstration videos, conference abstracts and translated announcements. Submissions are reviewed for readable captions and clear licensing. The public gallery groups entries by language rather than technical maturity. A showcase badge indicates participation, not certification of a deployment or permission to access service data. Moderators remove duplicate submissions and ask authors to credit collaborators. The monthly digest links to selected entries and upcoming meetups. Survey results guide the next event schedule; they do not change operating policy.\n\n## Case records appendix\nFor Atlas archives tagged HOLD, suspend the 21-day deletion rule until the case owner supplies a signed release; a missing release is not permission to prune.\n\n",
+  "required_spans": [
+    {
+      "name": "retention-command",
+      "start": 27,
+      "end": 175,
+      "quote": "For a routine Atlas export, retain the completed archive for 21 clear days after the close marker, then remove it with atlas archive prune --closed."
+    },
+    {
+      "name": "receipt-check",
+      "start": 812,
+      "end": 957,
+      "quote": "Before pruning an Atlas archive, verify that its receipt is mirrored to both ledger sites and record the receipt identifier in the change ticket."
+    },
+    {
+      "name": "clear-days",
+      "start": 2197,
+      "end": 2305,
+      "quote": "A clear day is a full UTC calendar day after the close marker; the day containing the marker is not counted."
+    },
+    {
+      "name": "hold-exception",
+      "start": 3581,
+      "end": 3739,
+      "quote": "For Atlas archives tagged HOLD, suspend the 21-day deletion rule until the case owner supplies a signed release; a missing release is not permission to prune."
+    }
+  ],
+  "irrelevant_spans": [
+    {
+      "name": "Design assets",
+      "start": 177,
+      "end": 788
+    },
+    {
+      "name": "Office logistics",
+      "start": 959,
+      "end": 1556
+    },
+    {
+      "name": "Training calendar",
+      "start": 1556,
+      "end": 2174
+    },
+    {
+      "name": "Historical migration",
+      "start": 2307,
+      "end": 2938
+    },
+    {
+      "name": "Community showcase",
+      "start": 2938,
+      "end": 3556
+    }
+  ],
+  "source": "Original synthetic document; no real operational data."
+}

@@ -7,7 +7,7 @@ This branch adds a CLI experiment, **not** a Hermes tool, compression hook, or l
 From this worktree:
 
 ```bash
-bash scripts/context-map-demo.sh --python /Users/sciphi/Projects/hermes-agent-lab/.venv/bin/python --live --allow-export --second-pass --output ignored/context-map-new-run
+bash scripts/context-map-demo.sh --python "${HERMES_PYTHON:?Set HERMES_PYTHON to a prepared test interpreter}" --live --allow-export --second-pass --labeled-packet --output ignored/context-map-new-run
 ```
 
 Use a **new** output directory. Remove `--live --allow-export` for an offline artifact/coverage smoke test: no semantic judgments are invented; all regions are unavailable and retained. `--python` uses the existing prepared test environment **read-only**, without pip/uv mutation. Without `--python`, the launcher uses the documented `scripts/run-in-hermes-env` PM workflow in `ignored/context-map-dev-home`; that provisioning path was not exercised here. It deliberately does not use the production home. Shell-supplied `TYPESAFE_API_KEY` can be inherited; standalone module invocation resolves an existing profile scope or loads `get_hermes_home()` with `build_profile_secret_scope`, restores its scope, and never prints the key.
@@ -39,7 +39,42 @@ Hard per-run caps: 30 attempted requests, 300,000 aggregate input tokens using p
 
 Request payload <=65,536 bytes; response <=131,072 bytes; <=96 questions/request; source export <=16,384 bytes and <=96 regions; task <=2,000 chars; intent <=1,000 chars. Oversize semantic input is visibly unavailable, never prefix-truncated. HTTP timeouts are 20s; a dedicated one-request subprocess is killed at 35s, also bounding DNS/slow-drip/stalled transport. Key travels over stdin, not argv. Per-request timings include subprocess overhead. Exact question coverage, model identifier, finite probabilities in [0,1] (booleans rejected), and usage types are validated. Invalid batches yield unavailable regions and full recovery, not synthetic success. Live CLI returns nonzero on semantic failure while preserving available artifacts.
 
-## Actual observations
+## Larger factorial follow-up — current evidence
+
+See [CONTEXT_MAP_RESULTS.md](CONTEXT_MAP_RESULTS.md) and the committed, programmatically derived
+[context-map-results.json](context-map-results.json). Three sparse synthetic manuals and a pinned
+PUBLIC contributor guide replace the tiny battery as the useful comparison. Local inspection:
+`ignored/context-map-factorial/index.html`. These are scripts/artifacts, **not integrated into live Hermes**.
+
+Run one predeclared case in four arms (heading/window × direct/enriched):
+
+```bash
+"${HERMES_PYTHON:?Set a prepared interpreter}" -m scripts.context_map_experiments \
+  --case scripts/context_map_cases/atlas-retention.json \
+  --output ignored/new-atlas --ledger ignored/authorized-session-ledger.json \
+  --live --allow-export
+```
+
+Reuse the **same ledger across invocations** in an authorized session; do not reset it to evade
+budgets. The new ledger caps 35 requests and 500,000 actual input tokens (unknown/failed attempts
+charged their reservation). Existing per-invocation 30-request/300,000 conservative reservation
+caps are unchanged. One case per invocation avoids overrunning that tighter reservation budget.
+For the longer public path/task, use `--batch-regions 6`: the default 12-region enriched payload
+exceeds the unchanged 65,536-byte cap. No automatic retries or fallback destinations were added.
+Oracles are frozen in `oracle.json` before any classification and are not exported to the model.
+
+`--labeled-packet` on the original CLI adds `packet-labeled.txt`: path, region, line/column and
+character anchors plus explicit leading/interior/trailing omissions. The four-arm experiment
+always writes it. `packet.txt` remains the exact raw concatenation for reproduction. Labels are
+presentation, not authentication; source text remains untrusted and may resemble labels.
+
+The targeted `verify_neighbors(result, client)` comparison is opt-in and preserves the original
+broad-neighbor maps. It asks directed adjacent-pair questions with explicit labeled source slices,
+keeps uncertain pairs, and never removes other selection reasons. It was added only after actual
+irrelevant-neighbor retention was observed, with a failing behavioral test before implementation.
+No thresholds changed. The public unreadability/uncertainty issue remains unsolved.
+
+## Earlier tiny-fixture observations (historical, confounded)
 
 Latest full battery: `ignored/context-map-live-02/index.html` and `battery.json`. Final-code smoke: `ignored/context-map-final-smoke/report.html`. Earlier pre-hard-deadline run: `ignored/context-map-live-01/`.
 

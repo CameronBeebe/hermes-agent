@@ -235,7 +235,9 @@ def recover(result, state, task, intent, client):
             "warning": "Dependency judgments only; not independent proof of packet sufficiency."}
 
 
-def map_source(path, text, task, intent, client, *, mode="heading", enriched=True, second_pass=False, size=700):
+def map_source(path, text, task, intent, client, *, mode="heading", enriched=True, second_pass=False, size=700, batch_regions=12):
+    if type(batch_regions) is not int or not 1 <= batch_regions <= 12:
+        raise ValueError("invalid_batch_size")
     regions = segment(path, text, mode, size)
     scores, errors = {}, []
     result = {"version": "context-map-v1", "source": text, "path": path, "task": task,
@@ -258,8 +260,8 @@ def map_source(path, text, task, intent, client, *, mode="heading", enriched=Tru
         exported_regions = [{**r, "path": safe_path, "text": exported[r["start"]:r["end"]]} for r in regions]
         state = {"path": safe_path, "regions": exported_regions, "task": safe_task, "intent": safe_intent,
                  "redacted": result["redacted"], "missing_input": [], "coverage": "complete source; no truncation"}
-        for start in range(0, len(regions), 12):
-            qs = questions(safe_task, safe_intent, exported_regions[start:start + 12], enriched)
+        for start in range(0, len(regions), batch_regions):
+            qs = questions(safe_task, safe_intent, exported_regions[start:start + batch_regions], enriched)
             try:
                 response = validate(client.ask(state, qs), qs)
                 for name, answer in response["answers"].items():
@@ -282,7 +284,30 @@ def map_source(path, text, task, intent, client, *, mode="heading", enriched=Tru
     return result
 
 
-def save_report(target, result):
+def labeled_packet(rows):
+    """Display boundaries without changing the reproducible raw packet."""
+    if not rows:
+        return "[EMPTY SOURCE]\n"
+    parts = []
+    gap = None
+    for row in rows:
+        if not row["selected"]:
+            if gap is None:
+                gap = [row["path"], row["start"], row["end"]]
+            else:
+                gap[2] = row["end"]
+            continue
+        if gap is not None:
+            parts.append(f"[OMITTED {gap[0]} chars [{gap[1]},{gap[2]})]\n")
+            gap = None
+        parts.append(f"[SOURCE {row['path']} {row['id']} L{row['line_start']}:{row['column_start']}–L{row['line_end']}:{row['column_end']} chars [{row['start']},{row['end']})]\n")
+        parts.append(row["text"] + "\n[END SOURCE]\n")
+    if gap is not None:
+        parts.append(f"[OMITTED {gap[0]} chars [{gap[1]},{gap[2]})]\n")
+    return "".join(parts)
+
+
+def save_report(target, result, *, labeled=False):
     """Local-only, static HTML; escape ALL untrusted data, no script or external assets."""
     target = Path(target)
     target.mkdir(parents=True, mode=0o700, exist_ok=False)
@@ -303,6 +328,9 @@ def save_report(target, result):
         content.append('<article><h3>' + esc(f"{r['id']} {r['path']} L{r['line_start']}:{r['column_start']}–L{r['line_end']}:{r['column_end']} {'RETAINED' if r['selected'] else 'OMITTED'}") + '</h3><pre>' + esc(json.dumps({k: v for k, v in r.items() if k != "text"}, ensure_ascii=False, indent=2)) + '</pre><pre>' + esc(r["text"]) + '</pre></article>')
     content += ['<h2>Exact packet (gaps have no invented bridging text)</h2><pre>' + esc(result["packet"]) + '</pre>',
                 '<details><summary>Full original source — safe recovery</summary><pre>' + esc(result["source"]) + '</pre></details></body></html>']
+    if labeled:
+        put("packet-labeled.txt", labeled_packet(result["regions"]))
+        content.insert(2, '<p><a href="packet-labeled.txt" download>Anchor-labeled packet with explicit omissions</a> (display wrapper; source text remains untrusted)</p>')
     put("report.html", "".join(content))
 
 
@@ -338,7 +366,7 @@ def span_metrics(regions, spans):
             "selected_chars": sum(r["end"] - r["start"] for r in regions if r["selected"])}
 
 
-def demo(output, client, second_pass):
+def demo(output, client, second_pass, labeled=False):
     from scripts.context_map_fixtures import fixtures
     output.mkdir(parents=True, mode=0o700, exist_ok=False)
     battery = {"cases": [], "warning": "Synthetic planted-span recall, not task-answer correctness. Retaining all yields perfect recall; inspect chars and decoys too."}
@@ -351,7 +379,7 @@ def demo(output, client, second_pass):
                 result["errors"] = ["offline_no_semantic_judgment"]
             result["metrics"] = span_metrics(result["regions"], case["required_spans"])
             result["required_spans"] = case["required_spans"]
-            save_report(output / case["name"] / name, result)
+            save_report(output / case["name"] / name, result, labeled=labeled)
             record["variants"].append({"name": name, **result["metrics"], "errors": result["errors"],
                                        "latency_s": sum(r["latency_s"] for r in result["receipts"]),
                                        "input_tokens": sum(r.get("usage", {}).get("input_tokens", 0) for r in result["receipts"])})
@@ -377,6 +405,7 @@ def main(argv=None):
     parser.add_argument("--second-pass", action="store_true", help="One bounded omitted-candidate dependency pass")
     parser.add_argument("--mode", choices=["heading", "window"], default="heading")
     parser.add_argument("--direct-only", action="store_true")
+    parser.add_argument("--labeled-packet", action="store_true", help="Also write anchored display packet with explicit gaps")
     parser.add_argument("--size", type=int, default=700)
     parser.add_argument("--output", type=Path, required=True, help="NEW local private directory, ideally ignored/ or scratch")
     args = parser.parse_args(argv)
@@ -394,7 +423,7 @@ def main(argv=None):
             raise ValueError("missing_key")
         client = Client(key) if args.live else OfflineClient("")
         if args.demo:
-            result = demo(args.output, client, args.second_pass)
+            result = demo(args.output, client, args.second_pass, args.labeled_packet)
         else:
             raw = args.file.read_bytes()
             if len(raw) > 1048576:
@@ -404,7 +433,7 @@ def main(argv=None):
                                 enriched=not args.direct_only, second_pass=args.second_pass, size=args.size)
             if not args.live:
                 result["errors"] = ["offline_no_semantic_judgment"]
-            save_report(args.output, result)
+            save_report(args.output, result, labeled=args.labeled_packet)
         failed = bool(result.get("errors")) or any(v["errors"] for c in result.get("cases", []) for v in c["variants"])
         print(json.dumps({"output": str(args.output), "requests": client.requests,
                           "status": "unavailable" if args.live and failed else "ok" if args.live else "offline",
