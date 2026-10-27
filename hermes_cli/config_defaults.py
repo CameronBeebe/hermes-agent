@@ -62,6 +62,7 @@ DEFAULT_CONFIG = {
     },
     "agent": {
         "read_file_declared_intent": False,  # Session-static metadata, not access control.
+        "read_assessment": {"enabled": False, "provider": "", "model": ""},  # Explicit export opt-in.
         # Turn cap: null/"none"/"unlimited"/"inf"/0/-1 = unlimited; positive int caps (resolve_turn_limit).
         "max_turns": None,
         # Optional one-time model-visible checkpoint warning before a finite turn cap is exhausted.
@@ -917,6 +918,7 @@ DEFAULT_CONFIG = {
         # Friendly built-in labels ("Reading <file>"); custom/plugin/MCP tools use the raw preview.
         "friendly_tool_labels": True,
         "read_file_declared_intent": False,  # Safe, short objectives in progress; independent of agent schema.
+        "read_assessment": False,  # Show per-call labels; does not enable assessment/export.
         # CLI-only post-turn line: "⋯ 12.4s · edited 2 files +18 -3 · read 4 files · ran 3
         # commands". Never in quiet/non-interactive or gateway surfaces (own footer).
         "turn_summary": True,
@@ -2719,6 +2721,11 @@ from hermes_cli.config_defaults_env import OptionalEnvVars, _base_url, _env, _ms
 # checklists; category: provider|tool|skill|messaging|setting, advanced=True hides from checklists,
 # tools=[...] lists the model tools the key unlocks. Provider entries: config_provider_env (on first read).
 OPTIONAL_ENV_VARS = OptionalEnvVars({
+    "TYPESAFE_API_KEY": {
+        "description": "TypeSafe key for opt-in read assessments",
+        "prompt": "TypeSafe API key", "url": "https://typesafe.ai",
+        "password": True, "category": "provider",
+    },
     # ── Provider (handled in provider selection, not shown in checklists) ──
     "NOUS_BASE_URL": _base_url("Nous Portal"),
     "HERMES_ANON_API_SECRET": _env(
