@@ -247,3 +247,23 @@ def test_private_record_creation_failure_keeps_read_and_reports_unsaved(tmp_path
     messages = _execute(_agent(), [{"path": str(path)}])
     assert json.loads(messages[-1]["content"])["content"] == "1|fixture"
     assert "not saved" in capsys.readouterr().out
+
+
+@pytest.mark.platforms("posix")
+@pytest.mark.parametrize("target_exists", [True, False])
+def test_symlink_annotation_store_is_refused_without_breaking_read(tmp_path, monkeypatch, capsys, target_exists):
+    configure()
+    monkeypatch.delenv("TYPESAFE_API_KEY", raising=False)
+    redirected = tmp_path / "redirected"
+    if target_exists:
+        redirected.mkdir()
+    store = get_hermes_home() / "read_assessments"
+    store.symlink_to(redirected, target_is_directory=True)
+    path = tmp_path / "fixture.txt"
+    path.write_text("fixture")
+    messages = _execute(_agent(), [{"path": str(path)}])
+    assert json.loads(messages[-1]["content"])["content"] == "1|fixture"
+    assert "not saved" in capsys.readouterr().out
+    assert store.is_symlink()
+    assert not list(redirected.glob("*.json"))
+    assert redirected.exists() is target_exists

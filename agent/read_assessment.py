@@ -111,6 +111,9 @@ def _assess_read(agent, messages, ref, result):
         record["reason"] = "assessment_error"
     try:
         directory = get_hermes_home() / "read_assessments"
+        # Saved evidence must not follow a redirected annotation store.
+        if directory.is_symlink():
+            raise OSError("symlink_annotation_store")
         directory.mkdir(mode=0o700, exist_ok=True)
         path = directory / f'{record["assessment_id"]}.json'
         fd = os.open(path, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
