@@ -223,6 +223,7 @@ def recover(result, state, task, intent, client):
           "Does this omitted candidate supply a definition, dependency, missing continuation or exception "
           "needed to interpret specific evidence in that retained packet for the task? Mere shared topic is not enough."}
           for r in omitted}
+    result.setdefault("question_batches", []).append({"stage": "recovery", "questions": qs})
     response = validate(client.ask({**state, "retained": result["retained"]}, qs), qs)
     for r in omitted:
         score = response["answers"][r["id"] + ".recover"]["noul"]
@@ -260,15 +261,20 @@ def map_source(path, text, task, intent, client, *, mode="heading", enriched=Tru
         exported_regions = [{**r, "path": safe_path, "text": exported[r["start"]:r["end"]]} for r in regions]
         state = {"path": safe_path, "regions": exported_regions, "task": safe_task, "intent": safe_intent,
                  "redacted": result["redacted"], "missing_input": [], "coverage": "complete source; no truncation"}
+        result["exported_state"] = state
+        result["question_batches"] = []
         for start in range(0, len(regions), batch_regions):
             qs = questions(safe_task, safe_intent, exported_regions[start:start + batch_regions], enriched)
+            result["question_batches"].append({"stage": "first_pass", "questions": qs})
             try:
                 response = validate(client.ask(state, qs), qs)
                 for name, answer in response["answers"].items():
                     rid, signal = name.split(".")
                     scores.setdefault(rid, {})[signal] = answer["noul"]
-            except (ValueError, httpx.HTTPError, KeyError, TypeError):
-                errors.append("service_or_validation_error")
+            except (ValueError, httpx.HTTPError, KeyError, TypeError) as exc:
+                admission = {"payload_limit", "question_limit", "request_budget", "token_budget", "session_request_budget", "session_token_budget"}
+                code = str(exc)
+                errors.append("admission_" + code + "_no_export" if code in admission else "service_or_validation_error")
                 break
         result.update(compose(text, regions, scores, enriched))
         result["first_pass"] = {k: result[k] for k in ("retained", "omitted", "selected_chars")}
@@ -309,6 +315,8 @@ def labeled_packet(rows):
 
 def save_report(target, result, *, labeled=False):
     """Local-only, static HTML; escape ALL untrusted data, no script or external assets."""
+    from scripts.context_preview_render import validate_correspondence
+    validate_correspondence(result)
     target = Path(target)
     target.mkdir(parents=True, mode=0o700, exist_ok=False)
     def put(name, content):
@@ -318,20 +326,10 @@ def save_report(target, result, *, labeled=False):
     put("source.txt", result["source"])
     put("packet.txt", result["packet"])
     put("map.json", json.dumps(result, ensure_ascii=False, indent=2, allow_nan=False))
-    esc = html.escape
-    header = '<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src \'none\'; style-src \'unsafe-inline\'; base-uri \'none\'; form-action \'none\'"><title>Context map inspection</title><style>body{font:16px system-ui;max-width:1100px;margin:2em auto;background:#101820;color:#eee}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#192531;padding:1em}.warning,.unavailable,.ambiguous{color:#ffbe66}article{border:1px solid #546474;margin:1em 0;padding:1em}a{color:#90cfff}</style></head><body>'
-    content = [header, '<h1>Context map · LOCAL ORIGINAL DATA</h1>',
-               '<p class="warning">EXPERIMENTAL. Not correctness or authorization. No live context changes. Original secrets may be present locally.</p>',
-               '<p><a href="source.txt" download>Recover full original source</a> · <a href="packet.txt" download>Exact extractive packet</a> · <a href="map.json" download>Machine JSON</a></p>',
-               '<h2>Metadata / failures / usage</h2><pre>' + esc(json.dumps({k: v for k, v in result.items() if k not in {"source", "packet", "regions"}}, ensure_ascii=False, indent=2)) + '</pre>']
-    for r in result["regions"]:
-        content.append('<article><h3>' + esc(f"{r['id']} {r['path']} L{r['line_start']}:{r['column_start']}–L{r['line_end']}:{r['column_end']} {'RETAINED' if r['selected'] else 'OMITTED'}") + '</h3><pre>' + esc(json.dumps({k: v for k, v in r.items() if k != "text"}, ensure_ascii=False, indent=2)) + '</pre><pre>' + esc(r["text"]) + '</pre></article>')
-    content += ['<h2>Exact packet (gaps have no invented bridging text)</h2><pre>' + esc(result["packet"]) + '</pre>',
-                '<details><summary>Full original source — safe recovery</summary><pre>' + esc(result["source"]) + '</pre></details></body></html>']
-    if labeled:
-        put("packet-labeled.txt", labeled_packet(result["regions"]))
-        content.insert(2, '<p><a href="packet-labeled.txt" download>Anchor-labeled packet with explicit omissions</a> (display wrapper; source text remains untrusted)</p>')
-    put("report.html", "".join(content))
+    from scripts.context_preview_render import render_report, render_source
+    put("packet-labeled.txt", labeled_packet(result["regions"]))
+    put("source.html", render_source(result))
+    put("report.html", render_report(result))
 
 
 def profile_key():
@@ -429,7 +427,7 @@ def main(argv=None):
             if len(raw) > 1048576:
                 raise ValueError("local_source_limit")
             text = raw.decode("utf-8", errors="strict")
-            result = map_source(str(args.file), text, args.task, args.intent, client, mode=args.mode,
+            result = map_source(args.file.name, text, args.task, args.intent, client, mode=args.mode,
                                 enriched=not args.direct_only, second_pass=args.second_pass, size=args.size)
             if not args.live:
                 result["errors"] = ["offline_no_semantic_judgment"]

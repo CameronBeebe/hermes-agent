@@ -1,107 +1,131 @@
-# Standalone context-map experiment
+# Opt-in context preview
 
-This branch adds a CLI experiment, **not** a Hermes tool, compression hook, or live context-dropping policy. It never edits a running conversation/config. No embeddings or generated summaries. It evaluates every bounded candidate against a known task and declared intent, then composes typed signals with a deterministic, inspectable rubric.
+A standalone inspection artifact, **not live context filtering**. Nothing replaces `read_file`
+results, edits a conversation/system prompt, or changes Hermes configuration. The default preview
+uses heading-aware segmentation and direct evidence signals. Enriched signals and dependency
+recovery remain explicit alternatives, not recommended defaults.
 
-## One command (tested environment)
+## Browse saved evidence — one command, no API calls
 
-From this worktree:
-
-```bash
-bash scripts/context-map-demo.sh --python "${HERMES_PYTHON:?Set HERMES_PYTHON to a prepared test interpreter}" --live --allow-export --second-pass --labeled-packet --output ignored/context-map-new-run
-```
-
-Use a **new** output directory. Remove `--live --allow-export` for an offline artifact/coverage smoke test: no semantic judgments are invented; all regions are unavailable and retained. `--python` uses the existing prepared test environment **read-only**, without pip/uv mutation. Without `--python`, the launcher uses the documented `scripts/run-in-hermes-env` PM workflow in `ignored/context-map-dev-home`; that provisioning path was not exercised here. It deliberately does not use the production home. Shell-supplied `TYPESAFE_API_KEY` can be inherited; standalone module invocation resolves an existing profile scope or loads `get_hermes_home()` with `build_profile_secret_scope`, restores its scope, and never prints the key.
-
-For your own authorized UTF-8 source, run from an activated environment:
+From the checkout:
 
 ```bash
-python -m scripts.context_map --file public-manual.md --task 'What is the retention limit?' --intent 'Find the rule, definitions and exceptions' --live --allow-export --second-pass --output ignored/my-map
+bash scripts/context-preview.sh --report ignored/context-map-factorial
 ```
 
-`--mode window --direct-only` selects the baseline. `--size` is a character ceiling (default 700; battery 180). Baseline still asks evidence-readability so missing evidence is not silently treated as irrelevance. The HTML includes source recovery, every retained/omitted region, fixed selection reasons, raw probabilities, ambiguity, errors, exact packet, and usage/latency/model receipts. `source.txt`, `packet.txt`, and `map.json` are companion artifacts. Each individual HTML is self-contained for inspection and includes the complete original source. Reports are local originals, **not safe to publish**: redaction applies only to service copies. Report directories/files use private permissions. Existing output directories are refused.
+The launcher refreshes HTML from saved `map.json` files, prints an available
+`http://127.0.0.1:PORT/` URL, opens the browser, and serves until Ctrl-C. Python 3.10+ standard
+library only for saved browsing: no installation, credentials, provider calls, CDN, or scripts
+in the page. `--python /path/to/prepared/python` chooses an existing interpreter read-only.
+`--no-open` prints the URL without launching a browser; `--port 8766` requests a specific port
+and fails clearly if occupied; default `--port 0` chooses an available port. `--render-only`
+refreshes and exits. Restart the server after regenerating reports: it serves a fixed snapshot.
 
-## Map contract
+Only known artifact names under the chosen directory are served. No directory listing, parent
+traversal, arbitrary source-path serving, symlink targets, repository root, or runtime state.
+The server binds only loopback, checks Host, sets CSP/nosniff/no-store, and serves original text
+as `text/plain`. Loopback is **not authentication against other local processes/users**. Local
+reports contain original, potentially sensitive source; do not publish them. Choose only report
+directories you intend to inspect. Source strings and stored JSON are untrusted data.
 
-- Heading mode recognizes Markdown ATX headings and prefers line boundaries within each section; long lines are split at the ceiling. This is deliberately not a full Markdown/parser-based code segmentation engine. Equal-window mode partitions exactly every N Unicode characters, including mid-line splits.
-- Character offsets are zero-based half-open; byte offsets reference original UTF-8; lines/columns are one-based (end column exclusive). CRLF is preserved. Every character is covered exactly once, including trailing text and long lines. Source SHA-256 and tests verify exact reconstruction.
-- Six independent Noul questions per enriched region: readable evidence, direct evidence, prerequisite/definition, exception/contradiction, legitimate domain instruction, and need-neighbor. Questions explicitly repeat task, intent, path, region ID, line span and offsets: question IDs alone are not model-visible.
-- All regions remain in shared state. Up to 12 regions' questions per request (72 enriched); this is exhaustive candidate coverage, not top-K. Source text is evidence, never rubric authority. Source/task/intent/path are redacted before request construction; affected original lines are fully masked while preserving character offsets. This is pattern/key redaction, **not a PII or injection-immunity guarantee**.
-- Positive selection threshold is `>= .8`; `.2 < p < .8` on a selection signal or evidence `< .8` retains as ambiguous. Unknown scores retain as unavailable. Direct-only uses direct plus evidence, not the other four signals. Scores are not calibrated probabilities of correctness.
-- A neighbor score `>= .8` retains immediate neighbors only, without recursive expansion. Known flaw: the model may confuse remote semantic dependencies with physical adjacency.
-- Optional second pass asks, for **each omitted candidate**, whether it supplies a definition/dependency/continuation/qualification needed for the concrete retained packet. At most 48 omitted candidates, one request, never recursive. It can only add, never delete. Ambiguous additions are labeled. First-pass IDs/selected size remain recorded. This is a dependency hypothesis, not an independent correctness certificate.
-- The packet is concatenated exact original slices in source order. There are **no invented transition sentences or summaries**. Gaps can produce misleading juxtaposition, so use region metadata; do not blindly substitute this into a live context. Full source is always the recovery route.
+## Preview one UTF-8 file — one command
 
-## Bounds and failure behavior
-
-Explicit export consent; fixed `https://api.typesafe.ai/v1/systemone`; requested `jev-latest`; actual served model logged. No proxy environment, redirects, retries, provider fallback, or alternate endpoint. Existing `read_assessment` remains unchanged; only its endpoint constant and common secret/redaction utilities are reused.
-
-Hard per-run caps: 30 attempted requests, 300,000 aggregate input tokens using pessimistic UTF-8-byte reservation plus framing allowance before calls, and actual returned usage as an additional stop. Failed attempts keep their reservation. This is a conservative local admission estimate, not a tokenizer/service-billing guarantee. Limits reset on a new invocation; the operator must account across invocations. This development session used 24 real requests total, below the initial 30-request/300k-input authorization.
-
-Request payload <=65,536 bytes; response <=131,072 bytes; <=96 questions/request; source export <=16,384 bytes and <=96 regions; task <=2,000 chars; intent <=1,000 chars. Oversize semantic input is visibly unavailable, never prefix-truncated. HTTP timeouts are 20s; a dedicated one-request subprocess is killed at 35s, also bounding DNS/slow-drip/stalled transport. Key travels over stdin, not argv. Per-request timings include subprocess overhead. Exact question coverage, model identifier, finite probabilities in [0,1] (booleans rejected), and usage types are validated. Invalid batches yield unavailable regions and full recovery, not synthetic success. Live CLI returns nonzero on semantic failure while preserving available artifacts.
-
-## Larger factorial follow-up — current evidence
-
-See [CONTEXT_MAP_RESULTS.md](CONTEXT_MAP_RESULTS.md) and the committed, programmatically derived
-[context-map-results.json](context-map-results.json). Three sparse synthetic manuals and a pinned
-PUBLIC contributor guide replace the tiny battery as the useful comparison. Local inspection:
-`ignored/context-map-factorial/index.html`. These are scripts/artifacts, **not integrated into live Hermes**.
-
-Run one predeclared case in four arms (heading/window × direct/enriched):
+Offline recovery/UX mode (all evidence unavailable and retained; no invented scores):
 
 ```bash
-"${HERMES_PYTHON:?Set a prepared interpreter}" -m scripts.context_map_experiments \
-  --case scripts/context_map_cases/atlas-retention.json \
-  --output ignored/new-atlas --ledger ignored/authorized-session-ledger.json \
-  --live --allow-export
+bash scripts/context-preview.sh --python "${HERMES_PYTHON:?Use an existing prepared interpreter}" --file public-manual.md --task 'What is the retention limit?' --intent 'Find the rule, definitions and exceptions' --output ignored/my-preview
 ```
 
-Reuse the **same ledger across invocations** in an authorized session; do not reset it to evade
-budgets. The new ledger caps 35 requests and 500,000 actual input tokens (unknown/failed attempts
-charged their reservation). Existing per-invocation 30-request/300,000 conservative reservation
-caps are unchanged. One case per invocation avoids overrunning that tighter reservation budget.
-For the longer public path/task, use `--batch-regions 6`: the default 12-region enriched payload
-exceeds the unchanged 65,536-byte cap. No automatic retries or fallback destinations were added.
-Oracles are frozen in `oracle.json` before any classification and are not exported to the model.
+Actual mapping requires the **additional** explicit flags `--live --allow-export`. This exports
+masked copies of the complete bounded file, task, intent and basename to TypeSafe. It may incur
+provider charges. Use only a file you are authorized to export. The existing profile-scoped
+`TYPESAFE_API_KEY` resolver is read-only; keys are not printed. Mapping uses the existing project
+`httpx`/redaction utilities, so select a prepared project interpreter; the launcher never installs
+or mutates dependencies. Live failures return nonzero after inspection while preserving recovery
+artifacts. An existing output directory is refused.
 
-`--labeled-packet` on the original CLI adds `packet-labeled.txt`: path, region, line/column and
-character anchors plus explicit leading/interior/trailing omissions. The four-arm experiment
-always writes it. `packet.txt` remains the exact raw concatenation for reproduction. Labels are
-presentation, not authentication; source text remains untrusted and may resemble labels.
+The preview CLI defaults to `--mode heading` and direct-only. Use `--mode window` or `--enriched`
+to inspect alternatives. `--second-pass` requires `--enriched`. There is no browser button that
+exports data. Saved-report browsing and live mapping are separate operations.
 
-The targeted `verify_neighbors(result, client)` comparison is opt-in and preserves the original
-broad-neighbor maps. It asks directed adjacent-pair questions with explicit labeled source slices,
-keeps uncertain pairs, and never removes other selection reasons. It was added only after actual
-irrelevant-neighbor retention was observed, with a failing behavioral test before implementation.
-No thresholds changed. The public unreadability/uncertainty issue remains unsolved.
+## What to inspect
 
-## Earlier tiny-fixture observations (historical, confounded)
+- **Comparison:** four original arms, first pass versus after recovery, metric definitions,
+  source/task/intent per case, synthetic versus public provenance, and clickable alternatives.
+  Missing metrics are unavailable, never zero. Original public admission failure is preserved;
+  the smaller-batch replacement has its own disclosed table and report.
+- **Selected passages:** exact extractive text by default, path and line/column links, explicit
+  leading/interior/trailing omission gaps. Source-order navigation distinguishes retained,
+  omitted, uncertain and unavailable regions. Uncertainty is not positive evidence.
+- **Recovery:** inspect any omitted passage inline or open the complete line-anchored source;
+  download exact UTF-8 bytes. No summaries or invented bridges join disjoint excerpts.
+- **Audit:** expandable probabilities/reasons, raw input metadata, questions and receipts.
+  Older saved maps did not capture exact question payloads; the UI says **unavailable**, rather
+  than reconstructing them and pretending they were observed. New maps record masked state and
+  attempted question batches; receipts determine whether an attempt reached the provider.
+- **Outcomes:** manually designated span coverage is **not task correctness**. Retaining all
+  source trivially covers every planted span. Negative neighbor results and recovery with no
+  added characters remain visible. Monetary cost is unknown without provider billing data.
 
-Latest full battery: `ignored/context-map-live-02/index.html` and `battery.json`. Final-code smoke: `ignored/context-map-final-smoke/report.html`. Earlier pre-hard-deadline run: `ignored/context-map-live-01/`.
+Artifacts: `report.html`, `source.html`, `source.txt`, `packet.txt`, `packet-labeled.txt`, `map.json`.
+HTML is self-contained CSS with no JavaScript or remote assets; companion source/packet links
+require the report directory. `index.html` is the collection landing page (or the single-file
+preview). Refresh changes generated HTML/labeled display packets only; original maps, source,
+raw packets, scores and receipts remain unchanged. New directories/files are private.
 
-Served model: **jev-1.14.0** (not the stale catalog alias). Latest battery: **11 requests, 27,115 input / 3,273 output tokens**, 4.3158s summed request latency (0.2925–0.5115s/request including subprocess). Across both battery runs plus final smoke: **24 requests, 60,984 input / 7,303 output tokens**. No semantic service errors occurred.
+## Map and safety contract
 
-| Synthetic case | Required-span recall baseline / enriched | Selected chars baseline / enriched |
-|---|---:|---:|
-| Late exception + definition | 3/3 / 3/3 | 343 / 343 |
-| Linked deployment definition + command | 3/3 / 3/3 | 386 / 332 |
-| Injected evaluator instruction + retry override | 2/2 / 2/2 | 360 / 156 |
-| Boundary-split qualified limit | 1/1 / 1/1 | 403 / 162 |
+Markdown ATX headings plus a character ceiling (default 700) are not a full parser. Window mode
+uses equal-character partitions. Every character is covered exactly once. Character offsets are
+zero-based half-open; UTF-8 byte offsets refer to original source; lines/columns are one-based,
+end column exclusive. CRLF is preserved in downloads. Rendering validates source slices,
+coordinates and packet correspondence; corrupted saved provenance is rejected.
 
-Total selected characters: **1,492 vs 993** (33.45% fewer); total original source 1,541 chars. Small planted fixtures are not a generalization claim. Heading segmentation and enriched questions change simultaneously, so this is **not a causal signal ablation**. A keep-everything strategy has perfect recall too.
+Direct asks readable evidence and concrete task relevance. Enriched adds prerequisite, exception,
+instruction and neighbor signals. Positive threshold is `>= .8`; `.2 < p < .8` on active selection
+signals or readability `< .8` retains as uncertain. Unknown scores retain as unavailable. Scores
+are not calibrated correctness probabilities. Neighbor expansion is immediate/nonrecursive.
+Optional recovery evaluates each omitted candidate (at most 48) and can only add, never delete.
 
-### Misses / negative evidence, not just averages
+Export is fixed to `https://api.typesafe.ai/v1/systemone`, requested model `jev-latest`, served
+model in receipts. No proxy environment, redirects, retries, provider fallback or endpoint option.
+Source/task/intent/path copies are redacted before questions; changed lines are masked preserving
+character offsets. This is pattern/key redaction, **not a PII or injection-immunity guarantee**.
+Original local files remain unredacted.
 
-No planted required-span misses were observed. However:
+Bounds remain unchanged: 30 attempted requests / 300,000 conservative reserved input tokens per
+invocation; 65,536-byte payload, 131,072-byte response, 96 questions/request, source export at most
+16,384 bytes and 96 regions, task 2,000 chars, intent 1,000 chars. No prefix truncation to fit.
+Dedicated transport process is killed at 35 seconds. Unknown/failed attempts keep reservations.
+Admission failures are visible without being confused with successful retention. Historical
+artifacts with generic errors retain those errors rather than rewriting the original evidence.
 
-- **Late-exception map failed to omit anything.** Glossary neighbor=.90 retained the irrelevant dashboard-publicity region; exception neighbor=.87 retained the lunch schedule. All 343 chars survived. These are concrete selection precision misses.
-- **Misleading Zeta publicity remained** because exception=.24 crossed the ambiguity band despite direct=.06. Conservative uncertainty handling reduces pruning, sometimes rightly and sometimes wastefully.
-- Baseline retained irrelevant tails solely because readability was .74/.77 on boundary fragments. Recall was partly protected by fail-safe retention, not demonstrated semantic discrimination.
-- Baseline included the injected evaluator note because it shared windows with needed evidence. Enriched isolated it and gave direct=.02, instruction=.02; the dependency pass gave .03. This is one successful decoy test, **not a prompt-injection security proof**.
-- Linked glossary direct=.53 but prerequisite=.93: useful evidence that distinct semantic roles are visible. Nevertheless baseline already retained that definition in a mixed window; no recall gain was established here.
-- All three executed recovery calls in the latest battery added **zero regions**. Final smoke also added none. Recovery wiring is exercised with a deterministic fake that actually adds a dependency, but live benefit remains unproven.
+## Experiment evidence and reproduction
 
-Next: separate segmentation from signal effects in a 2×2 ablation; add longer sparse fixtures with a truly missed remote prerequisite and a required boundary continuation; replace broad neighbor retention with explicit adjacent-pair qualification questions. Keep uncertainty/recovery visible rather than tune thresholds to force attractive compression numbers. No live harness integration until useful recall/precision tradeoffs survive harder examples.
+[CONTEXT_MAP_RESULTS.md](CONTEXT_MAP_RESULTS.md) explains the frozen synthetic/public corpus,
+negative findings and usage. [context-map-results.json](context-map-results.json) preserves the
+aggregate, receipts and representative slices; complete source/oracles are in `context_map_cases/`.
+The larger saved comparison is `ignored/context-map-factorial`; earlier tiny, confounded runs
+are `ignored/context-map-live-01` and `ignored/context-map-live-02`. Those ignored artifacts are
+not distributed by git. The viewer can refresh any compatible saved map directory.
 
-## Verification
+For an explicitly authorized four-arm experiment, the existing runner remains available:
 
-Tests were written and observed RED before each new implementation slice, then GREEN. Behavioral coverage includes complete segmentation/reconstruction, map composition, unavailable/invalid/missing responses, redaction, per-region question coverage, recovery, request/response/token bounds, deadline handling, scope restoration, inert HTML, original-byte artifacts, CLI export gate and the one-command launcher. Existing assessment regression suites also run. `scripts/check --staged --base HEAD` passed all 13 checks after resolving three lint findings. The repository test runner intentionally uses its own `/var/tmp/hermes-pytest-*` scratch roots even when TMPDIR/basetemp is supplied; no runner modifications were made. All demo artifacts remain under ignored directories; no production state, commits elsewhere, pushes, or PRs are touched.
+```bash
+"${HERMES_PYTHON:?Use an existing prepared interpreter}" -m scripts.context_map_experiments --case scripts/context_map_cases/atlas-retention.json --output ignored/new-atlas --ledger ignored/authorized-session-ledger.json --live --allow-export
+```
+
+Reuse the **same ledger** across authorized invocations: 35 requests / 500,000 accounted input
+tokens, in addition to unchanged per-invocation caps. Do not reset a ledger to evade budgets.
+For the public enriched arm, `--batch-regions 6` avoids the original 12-region payload refusal;
+this is a disclosed protocol intervention, not a clean replicate. Oracles are saved before
+classification and never exported. `context-map-demo.sh` remains the legacy tiny-battery runner.
+
+## Verification scope
+
+Canonical `scripts/run_tests.sh` covers rendering, exact source/packet correspondence, Unicode
+and CRLF, missing/admission/unavailable states, inert malicious HTML/paths, hyperlinks, offline
+refresh, real loopback HTTP traversal/symlink/Host rejection, dynamic ports and launcher subprocesses.
+Run `python scripts/check` for repository gates. No new live provider calls were necessary for
+this UI revision. Browser DOM/HTTP inspection is not pixel-level visual or assistive-technology
+verification; those remain manual checks. No downstream task-quality benefit is established.

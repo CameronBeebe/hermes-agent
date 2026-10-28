@@ -142,6 +142,20 @@ statistical significance.
   fail-safe retention and redaction. New behaviors were observed RED then GREEN. Additional
   assessment regressions bring the verified total to **95 passed across seven files**.
 
+## Context-preview UI revision
+
+The recommendation is now an opt-in static inspector. Run
+`bash scripts/context-preview.sh --report ignored/context-map-factorial` to open a loopback URL.
+The default view is selected source passages with anchored omissions, not raw JSON. Comparison
+keeps all four arms, the original public admission error, the disclosed smaller-batch replacement,
+and both directed-pair variants. Historical maps lack exact question payloads; this is explicitly
+shown as unavailable, never reconstructed as an alleged receipt. New mapping attempts save masked
+state/questions. Saved reports can be refreshed with no provider calls.
+
+The aggregate JSON is deliberately preserved rather than rewritten: its 70 KB includes historical
+negative evidence and receipts. The UI uses progressive disclosure instead of deleting provenance.
+See [CONTEXT_MAP.md](CONTEXT_MAP.md) for the one-file workflow, export consent and server boundary.
+
 ## Sources
 
 [1] https://raw.githubusercontent.com/CameronBeebe/hermes-agent/e5f2b15300a3d04978e4c07cc64adc7bcf8e7b1c/skills/autonomous-ai-agents/hermes-agent/references/contributor-guide.md — Public contributor guide, pinned commit
