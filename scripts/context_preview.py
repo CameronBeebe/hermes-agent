@@ -8,11 +8,18 @@ from scripts.context_preview_render import render_report, render_source, validat
 
 
 def private_write(path, content):
-    """Fixed generated names only; refuse symlinks, including refreshed artifacts."""
-    flags = os.O_WRONLY | os.O_CREAT | os.O_TRUNC | os.O_NOFOLLOW
-    fd = os.open(path, flags, 0o600)
-    with os.fdopen(fd, 'w', encoding='utf-8', newline='') as handle:
-        handle.write(content)
+    """Replace the directory entry, never truncate a possibly hardlinked inode."""
+    import tempfile
+    path = Path(path)
+    if path.is_symlink():
+        raise OSError('report_symlink')
+    fd, temporary = tempfile.mkstemp(prefix='.preview-', dir=path.parent)
+    try:
+        with os.fdopen(fd, 'w', encoding='utf-8', newline='') as handle:
+            handle.write(content)
+        os.replace(temporary, path)
+    finally:
+        Path(temporary).unlink(missing_ok=True)
 
 
 def saved_entries(root):
@@ -22,6 +29,12 @@ def saved_entries(root):
             raise ValueError('report_symlink')
         result = json.loads(path.read_text(encoding='utf-8-sig'))
         validate_correspondence(result)
+        for name, key in (('source.txt', 'source'), ('packet.txt', 'packet')):
+            companion = path.parent / name
+            if companion.is_symlink() or not companion.resolve().is_relative_to(root):
+                raise ValueError('report_symlink')
+            if companion.read_bytes() != result[key].encode('utf-8'):
+                raise ValueError('companion_correspondence')
         relative = path.parent.relative_to(root)
         oracle = path.parent.parent / 'oracle.json'
         # Corpus labels come from recorded provenance, never model guesses.
@@ -77,6 +90,11 @@ def make_server(directory, port=0):
         if path.is_symlink() or not path.resolve().is_relative_to(root) or not path.is_file():
             continue
         snapshot['/' + path.relative_to(root).as_posix()] = path.read_bytes()
+    # Use the verified map copy, not a second mutable read of companions.
+    for entry in entries:
+        for name, key in (('source.txt', 'source'), ('packet.txt', 'packet')):
+            path = root / entry['relative'] / name
+            snapshot['/' + path.relative_to(root).as_posix()] = entry['result'][key].encode('utf-8')
     landing = '/index.html' if '/index.html' in snapshot else '/report.html'
     if landing not in snapshot:
         raise ValueError('missing_report_index')

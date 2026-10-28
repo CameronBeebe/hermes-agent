@@ -274,7 +274,8 @@ def map_source(path, text, task, intent, client, *, mode="heading", enriched=Tru
             except (ValueError, httpx.HTTPError, KeyError, TypeError) as exc:
                 admission = {"payload_limit", "question_limit", "request_budget", "token_budget", "session_request_budget", "session_token_budget"}
                 code = str(exc)
-                errors.append("admission_" + code + "_no_export" if code in admission else "service_or_validation_error")
+                suffix = "_batch_not_sent" if start > 0 or len(client.receipts) > before else "_no_export"
+                errors.append("admission_" + code + suffix if code in admission else "service_or_validation_error")
                 break
         result.update(compose(text, regions, scores, enriched))
         result["first_pass"] = {k: result[k] for k in ("retained", "omitted", "selected_chars")}

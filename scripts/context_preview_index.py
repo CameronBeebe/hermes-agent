@@ -2,7 +2,7 @@
 from collections import defaultdict
 from urllib.parse import quote
 
-from scripts.context_preview_render import disclosure, document, esc
+from scripts.context_preview_render import disclosure, document, esc, evidence_status
 
 VARIANTS = ('heading-direct', 'heading-enriched', 'window-direct', 'window-enriched')
 DEFINITIONS = '''<details><summary>Metric definitions and rubric</summary><dl>
@@ -16,9 +16,18 @@ DEFINITIONS = '''<details><summary>Metric definitions and rubric</summary><dl>
 </dl></details>'''
 
 
+def covered_spans(metrics):
+    if 'covered_spans' in metrics:
+        return metrics['covered_spans']
+    if metrics.get('required_spans') is not None and isinstance(metrics.get('misses'), list):
+        return metrics['required_spans'] - len(metrics['misses'])
+    return None
+
+
 def metric_cells(metrics, source_chars):
     count = metrics.get('required_spans')
-    coverage = 'Not annotated' if not count else f"{count - len(metrics.get('misses', []))} / {count}"
+    covered = covered_spans(metrics)
+    coverage = 'Not annotated' if count == 0 else f'{covered} / {count}' if count is not None and covered is not None else 'Unavailable'
     selected = metrics.get('selected_chars', 'Unavailable')
     values = [coverage, f'{selected} / {source_chars}', metrics.get('irrelevant_retained_chars', 'Not annotated'),
               metrics.get('uncertain_retained_chars', 'Not recorded'), metrics.get('unavailable_retained_chars', 'Not recorded')]
@@ -26,32 +35,25 @@ def metric_cells(metrics, source_chars):
 
 
 def comparison(entries, stage):
-    totals = {}
-    counts = defaultdict(int)
-    measured = defaultdict(int)
+    groups = defaultdict(list)
     for entry in entries:
-        name = entry['variant']
-        if name not in VARIANTS:
-            continue
-        counts[name] += 1
-        result = entry['result']
-        metrics = result.get(stage)
-        if metrics is None:
-            continue
-        measured[name] += 1
-        total = totals.setdefault(name, {'required_spans': 0, 'misses': [], 'source_chars': 0})
-        total['source_chars'] += len(result['source'])
-        total['required_spans'] += metrics.get('required_spans', 0)
-        total['misses'].extend(metrics.get('misses', []))
-        for key in ('selected_chars', 'irrelevant_retained_chars', 'uncertain_retained_chars', 'unavailable_retained_chars'):
-            if key in metrics:
-                total[key] = total.get(key, 0) + metrics[key]
+        if entry['variant'] in VARIANTS:
+            groups[entry['variant']].append(entry['result'])
     rows = []
     for name in VARIANTS:
-        values = totals.get(name)
-        cells = metric_cells(values, values['source_chars']) if values else '<td colspan="5">Missing evidence · no recorded metrics for this arm</td>'
-        if 0 < measured[name] < counts[name]:
-            cells = f'<td colspan="5">Incomplete evidence · {measured[name]} / {counts[name]} cases have metrics</td>'
+        results = groups[name]
+        recorded = [r[stage] for r in results if r.get(stage) is not None]
+        values = {}
+        for key in ('required_spans', 'covered_spans', 'selected_chars', 'irrelevant_retained_chars',
+                    'uncertain_retained_chars', 'unavailable_retained_chars'):
+            numbers = [covered_spans(m) if key == 'covered_spans' else m.get(key) for m in recorded]
+            if numbers and all(value is not None for value in numbers):
+                values[key] = sum(numbers)
+            elif key not in {'required_spans', 'covered_spans'}:
+                values[key] = 'Unavailable · incomplete evidence'
+        cells = metric_cells(values, sum(len(r['source']) for r in results)) if recorded else '<td colspan="5">Missing evidence · no recorded metrics for this arm</td>'
+        if 0 < len(recorded) < len(results):
+            cells = f'<td colspan="5">Incomplete evidence · {len(recorded)} / {len(results)} cases have metrics</td>'
         label = '<small>Recommended starting point</small>' if name == 'heading-direct' else ''
         rows.append(f'<tr class="{"recommended" if name == "heading-direct" else ""}"><th scope="row">{name}{label}</th>{cells}</tr>')
     return ('<div class="table-wrap"><table><thead><tr><th>Variant</th><th>Manually planted coverage</th>'
@@ -68,12 +70,9 @@ def case_html(name, entries, index):
     body += '<div class="table-wrap"><table><thead><tr><th>Inspect saved variant</th><th>State</th><th>Coverage</th><th>Selected / source chars</th><th>Irrelevant</th><th>Uncertain</th><th>Unavailable</th></tr></thead><tbody>'
     for entry in sorted(entries, key=lambda e: (e['variant'] != 'heading-direct', e['variant'])):
         result = entry['result']
-        errors = result.get('errors', [])
-        status = '; '.join(errors) if errors else 'Recorded' if result.get('receipts') else 'Missing evidence · no receipts'
-        if any(r.get('status') == 'unavailable' for r in result['regions']):
-            status += ' · unavailable regions retained'
+        status = evidence_status(result) or 'Recorded'
         href = quote(entry['relative'] + '/report.html', safe='/')
-        body += f'<tr><th><a href="{href}">{esc(entry["variant"])}</a></th><td>{esc(status)}</td>{metric_cells(result.get("metrics", {}), len(result["source"]))}</tr>'
+        body += f'<tr><th><a href="{href}">{esc(entry["variant"])}</a></th><td>{status}</td>{metric_cells(result.get("metrics", {}), len(result["source"]))}</tr>'
     return body + '</tbody></table></div></section>'
 
 

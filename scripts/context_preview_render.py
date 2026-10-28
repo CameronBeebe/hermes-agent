@@ -88,9 +88,19 @@ def evidence_status(result):
     messages = []
     if result.get('missing_input'):
         messages.append('Missing input: ' + ', '.join(result['missing_input']))
+    receipts = result.get('receipts', [])
+    if receipts:
+        completed = sum(r.get('status') == 'ok' for r in receipts)
+        messages.append(f'Run-level provider receipts: {len(receipts)} attempted · {completed} completed. '
+                        'Requests include the complete masked source, not just the selected batch. '
+                        'Failed attempts may also have exported it; a later rejection does not undo prior exports.')
     for error in result.get('errors', []):
-        label = 'Admission error · no export' if error.endswith('_no_export') else 'Mapping unavailable / incomplete'
-        messages.append(label + ': ' + error)
+        if error.startswith('admission_'):
+            code = error.removeprefix('admission_').removesuffix('_no_export').removesuffix('_batch_not_sent')
+            messages.append('Admission error · this batch not sent: ' + code)
+        else:
+            label = 'Admission error · no export' if error.endswith('_no_export') else 'Mapping unavailable / incomplete'
+            messages.append(label + ': ' + error)
     unavailable = sum(r.get('status') == 'unavailable' for r in result['regions'])
     if unavailable:
         messages.append(f'Unavailable evidence: {unavailable} regions. Retained for recovery, not a positive judgment.')

@@ -99,6 +99,34 @@ def test_existing_output_is_refused_without_refresh(tmp_path):
     assert (output / 'report.html').read_bytes() == before
 
 
+@pytest.mark.parametrize('name', ['source.txt', 'packet.txt'])
+@pytest.mark.parametrize('operation', [p.refresh, p.make_server])
+def test_companion_mismatch_is_refused_without_changing_evidence(tmp_path, name, operation):
+    root = tmp_path / 'report'
+    text = 'évidence\r\n'
+    m.save_report(root, {**m.compose(text, m.segment('f', text), {}), 'source': text})
+    (root / name).write_bytes(b'tampered')
+    before = {path.name: path.read_bytes() for path in root.iterdir()}
+    with pytest.raises(ValueError, match='companion_correspondence'):
+        operation(root)
+    assert {path.name: path.read_bytes() for path in root.iterdir()} == before
+
+
+def test_refresh_replaces_hardlinked_artifact_without_writing_outside(tmp_path):
+    root = tmp_path / 'report'
+    m.save_report(root, {**m.compose('hello', m.segment('f', 'hello'), {}), 'source': 'hello'})
+    outside = tmp_path / 'outside'
+    outside.write_text('unchanged')
+    artifact = root / 'report.html'
+    artifact.unlink()
+    artifact.hardlink_to(outside)
+    p.refresh(root)
+    assert outside.read_text() == 'unchanged'
+    assert 'Context preview' in artifact.read_text()
+    assert artifact.stat().st_ino != outside.stat().st_ino
+    assert artifact.stat().st_mode & 0o777 == 0o600
+
+
 def test_refresh_refuses_external_symlink_without_writing_outside(tmp_path):
     root = tmp_path / 'report'
     m.save_report(root, {**m.compose('hello', m.segment('f', 'hello'), {}), 'source': 'hello'})

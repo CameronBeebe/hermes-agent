@@ -147,6 +147,15 @@ def test_comparison_shows_replacement_and_negative_results_without_raw_json():
     assert 'No downstream task-quality evaluation' in page
 
 
+def test_coverage_uses_explicit_aggregate_and_requires_recorded_misses():
+    from scripts.context_preview_index import metric_cells
+    metrics = {'covered_spans': 1, 'required_spans': 2, 'selected_chars': 5}
+    assert '<td>1 / 2</td>' in metric_cells(metrics, 10)
+    metrics.pop('covered_spans')
+    assert '<td>Unavailable</td>' in metric_cells(metrics, 10)
+    assert '2 / 2' not in metric_cells(metrics, 10)
+
+
 def test_partial_variant_metrics_are_unavailable_not_summed_as_success():
     from scripts.context_preview_index import comparison
     first = sample()
@@ -155,6 +164,26 @@ def test_partial_variant_metrics_are_unavailable_not_summed_as_success():
     entries = [{'variant': 'heading-direct', 'result': r} for r in [first, second]]
     page = comparison(entries, 'first_metrics')
     assert 'Incomplete evidence · 1 / 2 cases have metrics' in page
+
+
+def test_comparison_does_not_sum_partially_recorded_individual_metrics():
+    from scripts.context_preview_index import comparison
+    complete = {'required_spans': 2, 'covered_spans': 1, 'selected_chars': 5,
+                'irrelevant_retained_chars': 3, 'uncertain_retained_chars': 4,
+                'unavailable_retained_chars': 0}
+    for missing in complete:
+        partial = {k: v for k, v in complete.items() if k != missing}
+        entries = [{'variant': 'heading-direct', 'result': {'source': 'abcdefghij', 'metrics': metrics}}
+                   for metrics in (complete, partial)]
+        row = comparison(entries, 'metrics').split('<tbody>')[1].split('</tr>')[0]
+        cells = row.split('<td>')[1:]
+        assert len(cells) == 5
+        index = 0 if missing in {'covered_spans', 'required_spans'} else list(complete).index(missing) - 1
+        assert cells[index].startswith('Unavailable'), (missing, row)
+        if index != 0:
+            assert cells[0].startswith('2 / 4</td>')
+        if index != 1:
+            assert cells[1].startswith('10 / 20</td>')
 
 
 def test_source_anchors_follow_newline_offsets_not_unicode_separators(tmp_path):
@@ -184,6 +213,54 @@ def test_hostile_case_names_are_encoded_as_local_links(tmp_path):
         assert not urlsplit(href).scheme and not urlsplit(href).fragment
         assert (tmp_path / unquote(href)).is_file()
     assert not any(tag == 'tag' for tag, _ in doc.tags)
+
+
+def test_later_admission_failure_preserves_prior_export_receipts():
+    from scripts.context_preview_render import evidence_status
+
+    class TwoBatches:
+        key = ''
+
+        def __init__(self):
+            self.receipts = []
+
+        def ask(self, state, qs):
+            if self.receipts:
+                raise ValueError('token_budget')
+            assert len(state['regions']) == 2  # Every request contains the complete masked source.
+            self.receipts.append({'request': 1, 'status': 'ok', 'model': 'test-only',
+                                  'usage': {'input_tokens': 1, 'output_tokens': 1}})
+            return {'model': 'test-only', 'answers': {k: {'type': 'noul', 'noul': 1.0} for k in qs},
+                    'usage': {'input_tokens': 1, 'output_tokens': 1}}
+
+    result = m.map_source('f.md', '# A\none\n# B\ntwo\n', 't', 'i', TwoBatches(),
+                          enriched=False, batch_regions=1)
+    assert result['errors'] == ['admission_token_budget_batch_not_sent']
+    assert len(result['receipts']) == 1
+    status = evidence_status(result)
+    assert 'this batch not sent' in status
+    assert '1 attempted · 1 completed' in status
+    assert 'complete masked source' in status
+    assert 'no export' not in status
+
+
+def test_historical_admission_wording_does_not_deny_recorded_exports():
+    from scripts.context_preview_render import evidence_status
+    result = sample()
+    result['errors'] = ['admission_token_budget_no_export']
+    result['receipts'] = [{'request': 1, 'status': 'ok'}, {'request': 2, 'status': 'failed'}]
+    before = json.dumps(result)
+    status = evidence_status(result)
+    assert 'this batch not sent' in status
+    assert '2 attempted · 1 completed' in status
+    assert 'no export' not in status and '_no_export' not in status
+    assert json.dumps(result) == before
+    from scripts.context_preview_index import case_html
+    case = case_html('case', [{'result': result, 'relative': 'case/heading-direct',
+                              'variant': 'heading-direct'}], 0)
+    assert 'this batch not sent' in case
+    assert '2 attempted · 1 completed' in case
+    assert '_no_export' not in case
 
 
 def test_new_mapping_records_masked_questions_and_distinguishes_admission_failure():
