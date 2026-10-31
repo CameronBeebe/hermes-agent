@@ -62,6 +62,7 @@ DEFAULT_CONFIG = {
     },
     "agent": {
         "read_file_declared_intent": False,  # Session-static metadata, not access control.
+        "read_assessment": {"enabled": False, "provider": "", "model": ""},  # Explicit export opt-in.
         # Turn cap: null/"none"/"unlimited"/"inf"/0/-1 = unlimited; positive int caps (resolve_turn_limit).
         "max_turns": None,
         # Optional one-time model-visible checkpoint warning before a finite turn cap is exhausted.
@@ -727,17 +728,13 @@ DEFAULT_CONFIG = {
         # falling back; clamped [0,6]. Matters for pinned calls (MoA advisors) where provider
         # fallback is not meaningful recovery.
         "transient_retries": 2,
-        # When true, the auto-chain's OpenRouter step is skipped unless the fallback model ends in
-        # ":free" — a PAID lane is never used for background aux traffic even with
-        # OPENROUTER_API_KEY set.
+        # Skip paid OpenRouter aux fallback models (those without ":free"), even with OPENROUTER_API_KEY set.
         "free_only": False,
         # Override the auto-chain's OpenRouter fallback model (default google/gemini-3.6-flash,
         # PAID). Pair e.g. "nvidia/nemotron-3-ultra-550b-a55b:free" with free_only: true. A one-time
         # WARNING is logged whenever a non-":free" model is engaged.
         "openrouter_model": "",
-        # Endpoints that reject NON-streaming chat (HTTP 400): aux calls are sent with stream=True
-        # and aggregated. Case-insensitive URL substrings; some vendor endpoints are always
-        # stream-only.
+        # Case-insensitive endpoint substrings requiring stream=True + aggregation (non-streaming gives HTTP 400).
         "stream_only_base_urls": [],
         # Per-task blocks share one shape (_aux): provider "auto" = inherit the main model; base_url
         # overrides provider; api_key falls back to OPENAI_API_KEY; reasoning_effort:
@@ -917,6 +914,7 @@ DEFAULT_CONFIG = {
         # Friendly built-in labels ("Reading <file>"); custom/plugin/MCP tools use the raw preview.
         "friendly_tool_labels": True,
         "read_file_declared_intent": False,  # Safe, short objectives in progress; independent of agent schema.
+        "read_assessment": False,  # Show per-call labels; does not enable assessment/export.
         # CLI-only post-turn line: "⋯ 12.4s · edited 2 files +18 -3 · read 4 files · ran 3
         # commands". Never in quiet/non-interactive or gateway surfaces (own footer).
         "turn_summary": True,
@@ -2719,6 +2717,8 @@ from hermes_cli.config_defaults_env import OptionalEnvVars, _base_url, _env, _ms
 # checklists; category: provider|tool|skill|messaging|setting, advanced=True hides from checklists,
 # tools=[...] lists the model tools the key unlocks. Provider entries: config_provider_env (on first read).
 OPTIONAL_ENV_VARS = OptionalEnvVars({
+    "TYPESAFE_API_KEY": _env("TypeSafe key for opt-in read assessments", "TypeSafe API key",
+                             url="https://typesafe.ai", password=True, category="provider"),
     # ── Provider (handled in provider selection, not shown in checklists) ──
     "NOUS_BASE_URL": _base_url("Nous Portal"),
     "HERMES_ANON_API_SECRET": _env(

@@ -113,9 +113,12 @@ and file results are unchanged; transcript viewers must still render raw text sa
 a classifier, or evidence that the objective was fulfilled. It does not require
 intent for alternate read paths: terminal commands, Python `open`,
 `execute_code` (including its `hermes_tools.read_file` RPC), direct registry/API
-calls, or plugin-internal reads. There is no Jev networking, semantic scoring,
-context/result annotation service, or external data export in this feature.
-External-service access and data-sharing consent have not been configured.
+calls, or plugin-internal reads. Declared objectives alone do not enable networking
+or scoring. The separate [experimental read assessment](../../developer-guide/read-assessment.md)
+feature can compare selected task/context, objective and the actual returned excerpt
+using an explicitly configured provider. Assessment and its display both default
+off; enabling assessment consents to external export of bounded, redacted evidence.
+See that guide for privacy limits, configuration, labels, storage and replay.
 
 ## Terminal Backends
 

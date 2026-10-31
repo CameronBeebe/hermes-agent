@@ -1180,6 +1180,9 @@ def _commit_tool_result(
     if not _flush_session_db_after_tool_progress(agent, messages, stage=f"tool result {function_name}"):
         return None
 
+    from agent.read_assessment import assess_read
+    assess_read(agent, messages[:-1], ref, function_result, blocked=blocked, is_error=is_error)
+
     if not blocked:
         # ``tool.completed`` projects AFTER the canonical append + flush so resume can
         # reconstruct the result even if the UI bridge dies mid-projection.
