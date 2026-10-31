@@ -61,8 +61,8 @@ DEFAULT_CONFIG = {
         "storage": "hermes-home",
     },
     "agent": {
-        # Turn cap. null = unlimited (default; caps caused silent mid-task truncation). Positive int
-        # caps; "none"/"unlimited"/"inf"/0/-1 also mean unlimited (resolve_turn_limit).
+        "read_file_declared_intent": False,  # Session-static metadata, not access control.
+        # Turn cap: null/"none"/"unlimited"/"inf"/0/-1 = unlimited; positive int caps (resolve_turn_limit).
         "max_turns": None,
         # Optional one-time model-visible checkpoint warning before a finite turn cap is exhausted.
         # null = off; set a ratio strictly between 0 and 1 (for example, 0.75).
@@ -914,9 +914,9 @@ DEFAULT_CONFIG = {
         # display.tool_progress_overrides is deprecated (use display.platforms); a user-set value is
         # still honored at runtime and folded into platforms by migration.
         "tool_preview_length": 0,  # max chars for tool call previews (0 = no limit)
-        # Human-phrased status labels for built-in tools ("Reading <file>") in CLI spinner and
-        # gateway/desktop tool-progress; custom/plugin/MCP tools use the raw preview.
+        # Friendly built-in labels ("Reading <file>"); custom/plugin/MCP tools use the raw preview.
         "friendly_tool_labels": True,
+        "read_file_declared_intent": False,  # Safe, short objectives in progress; independent of agent schema.
         # CLI-only post-turn line: "⋯ 12.4s · edited 2 files +18 -3 · read 4 files · ran 3
         # commands". Never in quiet/non-interactive or gateway surfaces (own footer).
         "turn_summary": True,

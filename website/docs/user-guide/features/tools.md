@@ -64,6 +64,59 @@ A few tool behaviors are worth knowing when you read agent transcripts:
 - **Signal deaths are explained.** When a terminal command is killed by a signal, the result carries a human-readable note instead of a bare numeric code — e.g. exit `-9`/`137` becomes "terminated by signal 9: SIGKILL — often the kernel OOM killer on memory exhaustion, or an explicit kill -9", and segfaults, aborts, SIGTERM, broken pipes, and CPU/file-size limits are labeled the same way. Negative codes (subprocess semantics) are stated definitively; the shell's `128+signum` convention is hedged with "usually" since an application can legitimately exit with those codes.
 - **UTF-16 text files are transcoded, not refused.** `read_file` detects UTF-16 (BOM or byte-pattern heuristic, either endianness — common for Windows Notepad files and PowerShell `>` redirects) and transcodes it to UTF-8 for display instead of flagging the file as binary. The result includes a hint disclosing the conversion; edits via `patch`/`write_file` re-encode as UTF-8. Files over 10 MB and genuinely binary files still get the binary-file refusal.
 
+## Declared read objectives (opt-in foundation)
+
+By default, `read_file` requires only `path`. To ask the model for a short,
+explicit objective with every agent-dispatched `read_file` call:
+
+```bash
+hermes config set agent.read_file_declared_intent true
+```
+
+Start a **new session** after changing this setting. Set it to `false` to disable
+it for new sessions. The model-facing schema is copied once per agent surface;
+existing sessions and same-code resumed sessions retain their pinned contract,
+including during tool refreshes. The shared registry schema is not changed.
+
+With the feature enabled, the schema requires a string `declared_intent`, for
+example `"Identify configuration defaults"`. Guidance is roughly 3–10 words,
+not a word-count restriction or a request for private reasoning. Missing, null,
+non-string, or whitespace-only values produce a tool error before the file
+reader runs, in both sequential and parallel agent dispatch. Validation occurs
+after request middleware and pre-tool modification hooks. Successful reads keep
+the existing file reader, pagination, permissions, redaction, and output format.
+
+The objective remains in the original assistant tool-call arguments and existing
+pre/post tool hooks, correlated by tool-call ID; normal session persistence stores
+those arguments in SQLite. Treat it as untrusted model text, not verified intent.
+Do not put secrets in it. Existing transcript redaction and retention still apply.
+It is hidden from activity/progress displays by default (including verbose
+arguments). Independently opt in to a short objective in the classic CLI spinner
+and completed tool rows:
+
+```bash
+hermes config set display.read_file_declared_intent true
+```
+
+For example: `read config.yaml L1 — Identify configuration defaults`. This display
+setting does not require or add an objective to the model-facing schema; it only
+shows one when supplied. It can change without rebuilding the session's cached
+tool contract. Set it to `false` to hide objectives again. The shared progress
+helpers and start/completion/metadata callbacks receive only the display-safe copy:
+at most 80 characters (including an ellipsis), collapsed whitespace, nonprintable
+controls/bidi formatting replaced with spaces, and square brackets replaced with
+literal fullwidth lookalikes so Rich cannot interpret markup. The ordinary preview
+length setting can shorten the label further. Raw tool-call arguments, plugin hooks,
+and file results are unchanged; transcript viewers must still render raw text safely.
+
+**Limitations:** this is metadata foundation only, not an authorization boundary,
+a classifier, or evidence that the objective was fulfilled. It does not require
+intent for alternate read paths: terminal commands, Python `open`,
+`execute_code` (including its `hermes_tools.read_file` RPC), direct registry/API
+calls, or plugin-internal reads. There is no Jev networking, semantic scoring,
+context/result annotation service, or external data export in this feature.
+External-service access and data-sharing consent have not been configured.
+
 ## Terminal Backends
 
 The terminal tool can execute commands in different environments:
