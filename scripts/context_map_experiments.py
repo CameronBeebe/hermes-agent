@@ -8,9 +8,11 @@ from scripts import context_map as m
 
 class SessionClient(m.Client):
     """Persistent authorization ledger, sequential use only; base caps unchanged."""
-    def __init__(self, key, ledger, transport=None):
+    def __init__(self, key, ledger, transport=None, *, max_requests=35, max_input_tokens=500000):
         super().__init__(key, transport)
         self.ledger = Path(ledger)
+        self.max_requests = min(max_requests, 35)
+        self.max_input_tokens = min(max_input_tokens, 500000)
 
     def ask(self, state, qs):
         lock = self.ledger.with_suffix(".lock")
@@ -25,10 +27,10 @@ class SessionClient(m.Client):
         payload = json.dumps({"model": "jev-latest", "state": json.dumps(state, ensure_ascii=False),
                               "questions": qs}, ensure_ascii=False, allow_nan=False).encode()
         reservation = len(payload) + 4096 + 64 * len(qs)
-        if len(records) >= 35:
+        if len(records) >= self.max_requests:
             raise ValueError("session_request_budget")
         accounted = sum(r.get("usage", {}).get("input_tokens", r["reserved_tokens"]) for r in records)
-        if accounted + reservation > 500000:
+        if accounted + reservation > self.max_input_tokens:
             raise ValueError("session_token_budget")
         records.append({"status": "pending", "reserved_tokens": reservation})
         self._save(records)
@@ -60,6 +62,8 @@ def metrics(rows, required, irrelevant):
                    for r in selected for s in spans)
     def category(row):
         reasons = row["reasons"]
+        if "choice_top_k" in reasons:
+            return "ranking"
         if any(k in reasons for k in ("direct", "prerequisite", "exception", "instruction", "second_pass_dependency")):
             return "positive"
         if row["status"] == "unavailable":
@@ -74,7 +78,7 @@ def metrics(rows, required, irrelevant):
                   irrelevant_chars=sum(s["end"] - s["start"] for s in irrelevant),
                   irrelevant_retained_chars=overlap(irrelevant),
                   nonrequired_retained_chars=result["selected_chars"] - overlap(required))
-    for label in ("positive", "neighbor_only", "unavailable", "uncertain"):
+    for label in ("positive", "neighbor_only", "unavailable", "uncertain", "ranking"):
         result[label + "_retained_chars"] = sum(r["end"] - r["start"] for r in selected if category(r) == label)
     result["miss_details"] = [{"name": s["name"], "missing_ranges": [
         [max(r["start"], s["start"]), min(r["end"], s["end"])] for r in rows
@@ -158,6 +162,29 @@ def verify_neighbors(result, client):
     result["neighbor_verification"] = {"status": "scored", "answers": response["answers"], "model": response["model"], "usage": response["usage"]}
 
 
+def run_choice_case(case, output, client, top_k=3, size=700, batch_regions=12):
+    """Two same-region follow-up arms; never overwrite historical factorial results."""
+    output = Path(output)
+    output.mkdir(parents=True, mode=0o700, exist_ok=False)
+    (output / "oracle.json").write_text(json.dumps(case, indent=2), encoding="utf-8")
+    record = {"name": case["name"], "source_chars": len(case["text"]), "variants": {}}
+    for arm, name in [("independent-noul", "heading-direct-followup"),
+                      ("choice-exists", f"heading-choice-exists-k{top_k}")]:
+        result = m.map_source(case["path"], case["text"], case["task"], case["intent"], client,
+                              mode="heading", enriched=False, size=size, batch_regions=batch_regions,
+                              arm=arm, top_k=top_k)
+        result["corpus"] = "public" if case.get("source_url") else "synthetic" if "synthetic" in case.get("source", "").lower() else "unknown"
+        result["metrics"] = metrics(result["regions"], case["required_spans"], case["irrelevant_spans"])
+        result["first_metrics"] = result["metrics"]
+        m.save_report(output / name, result, labeled=True)
+        record["variants"][name] = {k: result[k] for k in
+                                    ("first_metrics", "metrics", "errors", "receipts", "second_pass")}
+        record["variants"][name].update({k: result[k] for k in
+                                        ("existence", "choice_answer", "top_k") if k in result})
+        (output / "results.json").write_text(json.dumps(record, indent=2), encoding="utf-8")
+    return record
+
+
 def main(argv=None):
     import argparse
     parser = argparse.ArgumentParser(description=__doc__)
@@ -167,14 +194,20 @@ def main(argv=None):
     parser.add_argument("--live", action="store_true")
     parser.add_argument("--allow-export", action="store_true")
     parser.add_argument("--batch-regions", type=int, choices=range(1, 13), default=12, help="Reduce batch size when long questions hit the existing payload cap")
+    parser.add_argument("--comparison", choices=["factorial", "choice-exists"], default="factorial")
+    parser.add_argument("--top-k", type=int, choices=range(1, 97), default=3)
     args = parser.parse_args(argv)
     if args.live and (not args.allow_export or args.ledger is None):
         parser.error("live requires --allow-export and --ledger")
     key = m.profile_key() if args.live else ""
     if args.live and not key:
         parser.error("missing scoped TypeSafe credential")
-    client = SessionClient(key, args.ledger) if args.live else m.OfflineClient("")
-    record = run_case(json.loads(args.case.read_text(encoding="utf-8-sig")), args.output, client, batch_regions=args.batch_regions)
+    limits = {"max_requests": 12, "max_input_tokens": 100000} if args.comparison == "choice-exists" else {}
+    client = SessionClient(key, args.ledger, **limits) if args.live else m.OfflineClient("")
+    runner = run_choice_case if args.comparison == "choice-exists" else run_case
+    options = {"top_k": args.top_k} if args.comparison == "choice-exists" else {}
+    record = runner(json.loads(args.case.read_text(encoding="utf-8-sig")), args.output, client,
+                    batch_regions=args.batch_regions, **options)
     print(json.dumps({"output": str(args.output), "requests": client.requests, "input_tokens": client.input_tokens,
                       "output_tokens": client.output_tokens, "reserved_tokens": client.reserved}))
     return int(args.live and any(v["errors"] for v in record["variants"].values()))

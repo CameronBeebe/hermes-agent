@@ -121,11 +121,68 @@ For the public enriched arm, `--batch-regions 6` avoids the original 12-region p
 this is a disclosed protocol intervention, not a clean replicate. Oracles are saved before
 classification and never exported. `context-map-demo.sh` remains the legacy tiny-battery runner.
 
+## TypeSafe semantic_find comparative baseline
+
+[TypeSafe's semantic_find cookbook](https://docs.typesafe.ai/cookbooks/semantic_find) is
+prior art for tagged-source retrieval: **one Choice over all IDs plus an independent Noul
+answer-exists question in the same request**, with shared document state. Its 218 lines are
+pre-split clauses, not arbitrary physical source lines. Choice allows at most 255 options.
+This baseline instead uses the existing heading regions (700-character ceiling) for a controlled
+comparison; the stricter existing 96-region / 16,384-byte source limits remain in force.
+
+Select `--arm choice-exists --top-k 3` on the existing `context-preview.sh --file ...` workflow.
+Heading/direct independent Noul remains the default; Choice cannot combine with window,
+enriched signals or dependency recovery. The lower-level `context_map` CLI additionally needs
+`--direct-only`. Export still requires **both** `--live --allow-export`; offline mode has no
+scores and retains everything for recovery. No embedding/index pipeline or runtime integration.
+
+- **Ranking:** one `where` Choice with `{region_id: null, ...}` criteria. Probabilities sum to
+  one and compete across candidates: they are **not independent relevance probabilities**.
+  A low value does not imply irrelevance, and a peaked winner cannot establish answer existence.
+- **Existence:** a separate `exists` Noul evaluates the whole supplied document, independent of
+  the ranking distribution (not a statistical-independence claim). `p <= .2` means model-judged
+  **absent**, `p >= .8` **present**, otherwise **uncertain**. These are uncalibrated policy bands,
+  not truth labels. Unlike the cookbook's middle label, `.5` is **not evidence of partial coverage**.
+- **Selection:** present selects exactly `min(K, number of regions)`, sorted by descending Choice
+  mass, ties by original source order. Default K=3, configurable 1–96, not tuned to this corpus.
+  No relevance threshold is applied: even zero-mass candidates can fill K. Absent selects no
+  packet, but retains every source passage, score, anchor and recovery link. Uncertain or
+  unavailable retains the entire source, visibly distinguished from positive evidence.
+- **Completeness:** neither existence nor top-K proves that the selected packet contains all
+  definitions, prerequisites or exceptions. Known oracle misses are displayed prominently;
+  every omitted passage remains inspectable. No automatic exception protection or completeness
+  judgment is claimed. A completeness question would be a separate future experiment.
+- **Validation:** exact question and option coverage; finite numeric probabilities/confidence
+  in [0,1], rejecting booleans; sum within absolute 1e-6 of one (no renormalization); selected
+  ID must be a maximal-probability option. Missing/unknown/malformed answers fail the whole
+  judgment safely, not defaulting missing options to zero. Actual served model/usage are recorded.
+
+Reproduce the small two-arm comparison with the existing experiment runner:
+
+```bash
+"${HERMES_PYTHON:?Use an existing prepared interpreter}" -m scripts.context_map_experiments --comparison choice-exists --top-k 3 --case scripts/context_map_cases/atlas-retention.json --output ignored/new-choice-atlas --ledger ignored/authorized-choice-ledger.json --live --allow-export
+```
+
+Use the **same ledger for the entire authorized follow-up**, including retries/invocations.
+This comparison enforces a tighter 12-attempt / 100,000 accounted-input-token session cap,
+using conservative reservations before requests and actual usage after valid responses. Failed
+attempt reservations remain charged. Existing transport/per-invocation limits and factorial
+35-request/500,000 session defaults are unchanged. Public direct uses two 12-region batches;
+Choice ranks all 13 regions in one request. This difference is disclosed, not hidden.
+
+The contribution here is an inspectable, provenance-preserving comparison against independent
+Noul region selection, not invention of semantic search or the Choice+exists technique. The
+cookbook example uses `jev-1.12`; our receipts record the actual served version, not that example.
+See [CONTEXT_CHOICE_RESULTS.md](CONTEXT_CHOICE_RESULTS.md) and
+[context-choice-results.json](context-choice-results.json) for the new run, including recall losses.
+Historical factorial maps/results and the heading/direct recommendation are not replaced.
+
 ## Verification scope
 
 Canonical `scripts/run_tests.sh` covers rendering, exact source/packet correspondence, Unicode
 and CRLF, missing/admission/unavailable states, inert malicious HTML/paths, hyperlinks, offline
 refresh, real loopback HTTP traversal/symlink/Host rejection, dynamic ports and launcher subprocesses.
-Run `python scripts/check` for repository gates. No new live provider calls were necessary for
-this UI revision. Browser DOM/HTTP inspection is not pixel-level visual or assistive-technology
-verification; those remain manual checks. No downstream task-quality benefit is established.
+Run `python scripts/check` for repository gates. The original UI revision required no provider
+calls; the separate Choice follow-up used the bounded live calls recorded in its results.
+Browser DOM/HTTP inspection is not pixel-level visual or assistive-technology verification;
+those remain manual checks. No downstream task-quality benefit is established.

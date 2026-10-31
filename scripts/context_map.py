@@ -104,8 +104,12 @@ def validate(data, qs):
     answers = data.get("answers")
     if not isinstance(answers, dict) or set(answers) != set(qs):
         raise ValueError("invalid_coverage")
-    for answer in answers.values():
-        if not isinstance(answer, dict) or set(answer) != {"type", "noul"} or answer["type"] != "noul":
+    for name, answer in answers.items():
+        if qs[name].get("type") == "choice":
+            from scripts.context_map_choice import validate_choice
+            validate_choice(answer, qs[name])
+            continue
+        if qs[name].get("type") != "noul" or not isinstance(answer, dict) or set(answer) != {"type", "noul"} or answer["type"] != "noul":
             raise ValueError("invalid_answer")
         p = answer["noul"]
         if type(p) not in (int, float) or not math.isfinite(p) or not 0 <= p <= 1:
@@ -236,11 +240,17 @@ def recover(result, state, task, intent, client):
             "warning": "Dependency judgments only; not independent proof of packet sufficiency."}
 
 
-def map_source(path, text, task, intent, client, *, mode="heading", enriched=True, second_pass=False, size=700, batch_regions=12):
+def map_source(path, text, task, intent, client, *, mode="heading", enriched=True, second_pass=False, size=700, batch_regions=12, arm="independent-noul", top_k=3):
+    from scripts import context_map_choice as choice
+    if arm not in {"independent-noul", "choice-exists"} or type(top_k) is not int or not 1 <= top_k <= 96:
+        raise ValueError("invalid_selection")
+    if arm == "choice-exists" and (enriched or second_pass or mode != "heading"):
+        raise ValueError("choice_requires_heading_direct_without_recovery")
     if type(batch_regions) is not int or not 1 <= batch_regions <= 12:
         raise ValueError("invalid_batch_size")
     regions = segment(path, text, mode, size)
     scores, errors = {}, []
+    choice_answers = None
     result = {"version": "context-map-v1", "source": text, "path": path, "task": task,
               "declared_intent": intent, "mode": mode, "enriched": enriched, "size": size,
               "sha256": hashlib.sha256(text.encode()).hexdigest(), "redacted": False,
@@ -263,21 +273,27 @@ def map_source(path, text, task, intent, client, *, mode="heading", enriched=Tru
                  "redacted": result["redacted"], "missing_input": [], "coverage": "complete source; no truncation"}
         result["exported_state"] = state
         result["question_batches"] = []
-        for start in range(0, len(regions), batch_regions):
-            qs = questions(safe_task, safe_intent, exported_regions[start:start + batch_regions], enriched)
+        batches = ([choice.questions(safe_task, safe_intent, exported_regions)] if arm == "choice-exists" else
+                   [questions(safe_task, safe_intent, exported_regions[start:start + batch_regions], enriched)
+                    for start in range(0, len(regions), batch_regions)])
+        for start, qs in enumerate(batches):
             result["question_batches"].append({"stage": "first_pass", "questions": qs})
             try:
                 response = validate(client.ask(state, qs), qs)
-                for name, answer in response["answers"].items():
-                    rid, signal = name.split(".")
-                    scores.setdefault(rid, {})[signal] = answer["noul"]
+                if arm == "choice-exists":
+                    choice_answers = response["answers"]
+                else:
+                    for name, answer in response["answers"].items():
+                        rid, signal = name.split(".")
+                        scores.setdefault(rid, {})[signal] = answer["noul"]
             except (ValueError, httpx.HTTPError, KeyError, TypeError) as exc:
                 admission = {"payload_limit", "question_limit", "request_budget", "token_budget", "session_request_budget", "session_token_budget"}
                 code = str(exc)
                 suffix = "_batch_not_sent" if start > 0 or len(client.receipts) > before else "_no_export"
                 errors.append("admission_" + code + suffix if code in admission else "service_or_validation_error")
                 break
-        result.update(compose(text, regions, scores, enriched))
+        result.update(choice.compose(text, regions, choice_answers, top_k) if arm == "choice-exists"
+                      else compose(text, regions, scores, enriched))
         result["first_pass"] = {k: result[k] for k in ("retained", "omitted", "selected_chars")}
         if second_pass and enriched and not errors:
             try:
@@ -286,7 +302,8 @@ def map_source(path, text, task, intent, client, *, mode="heading", enriched=Tru
                 errors.append("recovery_service_or_validation_error")
                 result["second_pass"] = {"status": "unavailable", "warning": "Omitted candidates not recovered; use full source."}
     if "regions" not in result:
-        result.update(compose(text, regions, scores, enriched))
+        result.update(choice.compose(text, regions, choice_answers, top_k) if arm == "choice-exists"
+                      else compose(text, regions, scores, enriched))
     result["receipts"] = client.receipts[before:]
     return result
 
@@ -404,10 +421,14 @@ def main(argv=None):
     parser.add_argument("--second-pass", action="store_true", help="One bounded omitted-candidate dependency pass")
     parser.add_argument("--mode", choices=["heading", "window"], default="heading")
     parser.add_argument("--direct-only", action="store_true")
+    parser.add_argument("--arm", choices=["independent-noul", "choice-exists"], default="independent-noul")
+    parser.add_argument("--top-k", type=int, choices=range(1, 97), default=3)
     parser.add_argument("--labeled-packet", action="store_true", help="Also write anchored display packet with explicit gaps")
     parser.add_argument("--size", type=int, default=700)
     parser.add_argument("--output", type=Path, required=True, help="NEW local private directory, ideally ignored/ or scratch")
     args = parser.parse_args(argv)
+    if args.arm == "choice-exists" and (args.demo or not args.direct_only or args.second_pass or args.mode != "heading"):
+        parser.error("choice-exists requires --file --direct-only --mode heading, without recovery")
     if args.live and not args.allow_export:
         parser.error("--live requires --allow-export")
     if args.demo == bool(args.file):
@@ -429,7 +450,7 @@ def main(argv=None):
                 raise ValueError("local_source_limit")
             text = raw.decode("utf-8", errors="strict")
             result = map_source(args.file.name, text, args.task, args.intent, client, mode=args.mode,
-                                enriched=not args.direct_only, second_pass=args.second_pass, size=args.size)
+                                enriched=not args.direct_only, second_pass=args.second_pass, size=args.size, arm=args.arm, top_k=args.top_k)
             if not args.live:
                 result["errors"] = ["offline_no_semantic_judgment"]
             save_report(args.output, result, labeled=args.labeled_packet)

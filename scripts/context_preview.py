@@ -141,7 +141,7 @@ def create_file_report(args):
     """Keep mapping/export separate from the stdlib-only offline viewer."""
     from scripts import context_map as m
     argv = ['--file', str(args.file), '--task', args.task, '--intent', args.intent,
-            '--output', str(args.output), '--mode', args.mode]
+            '--output', str(args.output), '--mode', args.mode, '--arm', args.arm, '--top-k', str(args.top_k)]
     if not args.enriched:
         argv.append('--direct-only')
     if args.live:
@@ -164,6 +164,8 @@ def main(argv=None):
     parser.add_argument('--live', action='store_true')
     parser.add_argument('--allow-export', action='store_true')
     parser.add_argument('--mode', choices=['heading', 'window'], default='heading')
+    parser.add_argument('--arm', choices=['independent-noul', 'choice-exists'], default='independent-noul')
+    parser.add_argument('--top-k', type=int, choices=range(1, 97), default=3)
     parser.add_argument('--enriched', action='store_true', help='Experimental additional signals; not recommended by default')
     parser.add_argument('--second-pass', action='store_true')
     parser.add_argument('--port', type=int, default=0, help='0 selects an available loopback port')
@@ -178,6 +180,8 @@ def main(argv=None):
         parser.error('saved report browsing does not accept export/output options')
     if not 0 <= args.port <= 65535:
         parser.error('port must be 0..65535')
+    if args.arm == 'choice-exists' and (args.enriched or args.second_pass or args.mode != 'heading'):
+        parser.error('choice-exists requires heading without enriched/recovery')
     if args.second_pass and not args.enriched:
         parser.error('--second-pass requires --enriched')
     try:

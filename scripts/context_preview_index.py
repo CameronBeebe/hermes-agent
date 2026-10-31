@@ -71,6 +71,8 @@ def case_html(name, entries, index):
     for entry in sorted(entries, key=lambda e: (e['variant'] != 'heading-direct', e['variant'])):
         result = entry['result']
         status = evidence_status(result) or 'Recorded'
+        if result.get('arm') == 'choice-exists':
+            status += f'<p>Answer existence: {esc(result["existence"]["outcome"])} · Noul {esc(result["existence"]["probability"])} · Top-K: {esc(result["top_k"])}</p>'
         href = quote(entry['relative'] + '/report.html', safe='/')
         body += f'<tr><th><a href="{href}">{esc(entry["variant"])}</a></th><td>{status}</td>{metric_cells(result.get("metrics", {}), len(result["source"]))}</tr>'
     return body + '</tbody></table></div></section>'
@@ -107,6 +109,8 @@ def render_index(entries, aggregate=None):
         body += '<p class="notice alert">Historical follow-up: the public heading/enriched admission failure was rerun with smaller batches. The original failure remains above; the replacement and directed-pair negative results remain clickable below. This intervention is not an unchanged replicate.</p>'
         body += followup_html(aggregate)
         body += disclosure('Saved aggregate including explicitly replaced public arm / negative pair results / receipts', aggregate)
+    if any(e['result'].get('arm') == 'choice-exists' for e in entries):
+        body += '<h2>Choice-ranking follow-up</h2><p class="notice alert">Separate same-heading comparison against independent Noul direct selection. Choice probabilities sum to one: relative ranking mass, not independent relevance. Top-K may omit required exceptions; answer existence is not packet completeness. Follow-up directories below never replace the original four arms or their recommendation.</p>'
     groups = defaultdict(list)
     for entry in entries:
         groups[entry['case']].append(entry)

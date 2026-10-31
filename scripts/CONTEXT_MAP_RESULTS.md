@@ -156,6 +156,14 @@ The aggregate JSON is deliberately preserved rather than rewritten: its 70 KB in
 negative evidence and receipts. The UI uses progressive disclosure instead of deleting provenance.
 See [CONTEXT_MAP.md](CONTEXT_MAP.md) for the one-file workflow, export consent and server boundary.
 
+## Separate Choice + exists comparison
+
+The [TypeSafe semantic_find follow-up](CONTEXT_CHOICE_RESULTS.md) adds a selectable relative
+Choice-ranking + independent answer-exists arm on the same heading regions. It credits the
+cookbook and records new results separately: lower retained size, but three required-definition
+misses at K=3 despite .99 answer existence. It does **not** replace the original results above
+or the heading/direct default. Existence uncertainty is not partial coverage.
+
 ## Sources
 
 [1] https://raw.githubusercontent.com/CameronBeebe/hermes-agent/e5f2b15300a3d04978e4c07cc64adc7bcf8e7b1c/skills/autonomous-ai-agents/hermes-agent/references/contributor-guide.md — Public contributor guide, pinned commit

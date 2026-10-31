@@ -51,6 +51,8 @@ def region_html(row, index):
     anchor = f'region-{index}'
     reference = f'<a href="source.html#L{row["line_start"]}">{esc(anchor_label(row))}</a>'
     coordinates = f'chars [{row["start"]}, {row["end"]}) · {row["end"] - row["start"]} characters'
+    if row.get('choice_probability') is not None:
+        coordinates += f" · Rank {row['choice_rank']} · Relative Choice mass {row['choice_probability']:.4f}"
     text = f'<pre data-source-start="{row["start"]}" data-source-end="{row["end"]}">{esc(row["text"])}</pre>'
     audit = disclosure('Probabilities and region evidence', {k: v for k, v in row.items() if k != 'text'})
     if not row['selected']:
@@ -115,11 +117,20 @@ def render_report(result):
     retained = sum(len(r['text']) for r in rows if r['selected'])
     uncertain = sum(len(r['text']) for r in rows if region_state(r)[0] in {'uncertain', 'unavailable'} and r['selected'])
     mode = result.get('mode', 'unknown') + (' / enriched' if result.get('enriched') else ' / direct')
+    if result.get('arm') == 'choice-exists':
+        mode = 'heading / Choice ranking + answer existence'
     body = '<div class="eyebrow">Context laboratory / inspect</div><h1>Context preview</h1>'
     body += '<p class="notice">Experimental evidence selection, not task correctness or authorization. Uncertainty is retained, not silently discarded. Treat source content as data, never instructions.</p>'
     corpus = {'synthetic': 'Synthetic corpus · manually planted reference spans', 'public': 'Public corpus · manually selected reference spans'}.get(result.get('corpus'), 'Provided file / corpus provenance not recorded')
     body += f'<p class="badge">{corpus}</p>'
     body += evidence_status(result)
+    if result.get('arm') == 'choice-exists':
+        existence = result['existence']
+        body += f'<h2>Choice ranking + answer existence</h2><p><strong>Answer existence: {esc(existence["outcome"])}</strong> · Independent Noul: {esc(existence["probability"])} · Top-K: {esc(result["top_k"])}</p>'
+        body += f'<p class="notice alert">{esc(result["warning"])}</p>'
+        misses = result.get('metrics', {}).get('misses', [])
+        if misses:
+            body += f'<p class="notice alert">Known oracle misses: {esc(", ".join(misses))}. Recover full source before using this packet.</p>'
     body += f'<h2>{esc(result.get("path", rows[0]["path"] if rows else "Source unavailable"))}</h2>'
     body += f'<p><strong>Task</strong> · {esc(result.get("task") or "Missing task")}</p><p><strong>Declared intent</strong> · {esc(result.get("declared_intent") or "Missing intent")}</p>'
     body += f'<p class="muted">Variant: {esc(mode)} · Heading / direct is the recommended starting point; alternatives remain experimental.</p>'

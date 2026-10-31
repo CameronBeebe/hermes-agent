@@ -1,0 +1,993 @@
+{
+  "protocol": {
+    "comparison": "same heading regions, size=700, direct independent Noul vs Choice + independent existence Noul in one request",
+    "top_k": 3,
+    "thresholds": {
+      "absent_max": 0.2,
+      "present_min": 0.8
+    },
+    "uncertain_policy": "retain all; not partial coverage",
+    "limits": {
+      "requests": 12,
+      "accounted_input_tokens": 100000
+    },
+    "prior_art": "https://docs.typesafe.ai/cookbooks/semantic_find"
+  },
+  "actual": {
+    "requests": 11,
+    "input_tokens": 42991,
+    "output_tokens": 2909,
+    "models": [
+      "jev-1.14.0"
+    ],
+    "latency_s_sum": 6.3806
+  },
+  "aggregate": {
+    "heading-direct-followup": {
+      "cases": 5,
+      "source_chars": 20981,
+      "covered_spans": 18,
+      "required_spans": 18,
+      "selected_chars": 8575,
+      "required_chars": 2880,
+      "required_chars_retained": 2880,
+      "irrelevant_chars": 15461,
+      "irrelevant_retained_chars": 3689,
+      "nonrequired_retained_chars": 5695,
+      "positive_retained_chars": 3174,
+      "neighbor_only_retained_chars": 0,
+      "unavailable_retained_chars": 0,
+      "uncertain_retained_chars": 5401,
+      "ranking_retained_chars": 0
+    },
+    "heading-choice-exists-k3": {
+      "cases": 5,
+      "source_chars": 20981,
+      "covered_spans": 15,
+      "required_spans": 18,
+      "selected_chars": 3198,
+      "required_chars": 2880,
+      "required_chars_retained": 2451,
+      "irrelevant_chars": 15461,
+      "irrelevant_retained_chars": 0,
+      "nonrequired_retained_chars": 747,
+      "positive_retained_chars": 0,
+      "neighbor_only_retained_chars": 0,
+      "unavailable_retained_chars": 0,
+      "uncertain_retained_chars": 0,
+      "ranking_retained_chars": 3198
+    }
+  },
+  "cases": [
+    {
+      "name": "atlas-absent-answer",
+      "source_chars": 3741,
+      "variants": {
+        "heading-direct-followup": {
+          "first_metrics": {
+            "required_span_recall": null,
+            "required_spans": 0,
+            "misses": [],
+            "selected_chars": 0,
+            "required_chars": 0,
+            "required_chars_retained": 0,
+            "irrelevant_chars": 3741,
+            "irrelevant_retained_chars": 0,
+            "nonrequired_retained_chars": 0,
+            "positive_retained_chars": 0,
+            "neighbor_only_retained_chars": 0,
+            "unavailable_retained_chars": 0,
+            "uncertain_retained_chars": 0,
+            "ranking_retained_chars": 0,
+            "miss_details": []
+          },
+          "metrics": {
+            "required_span_recall": null,
+            "required_spans": 0,
+            "misses": [],
+            "selected_chars": 0,
+            "required_chars": 0,
+            "required_chars_retained": 0,
+            "irrelevant_chars": 3741,
+            "irrelevant_retained_chars": 0,
+            "nonrequired_retained_chars": 0,
+            "positive_retained_chars": 0,
+            "neighbor_only_retained_chars": 0,
+            "unavailable_retained_chars": 0,
+            "uncertain_retained_chars": 0,
+            "ranking_retained_chars": 0,
+            "miss_details": []
+          },
+          "errors": [],
+          "receipts": [
+            {
+              "request": 1,
+              "questions": 18,
+              "reserved_tokens": 22829,
+              "status": "ok",
+              "requested_model": "jev-latest",
+              "model": "jev-1.14.0",
+              "usage": {
+                "input_tokens": 4327,
+                "output_tokens": 400
+              },
+              "latency_s": 1.2212
+            }
+          ],
+          "second_pass": {
+            "status": "disabled"
+          }
+        },
+        "heading-choice-exists-k3": {
+          "first_metrics": {
+            "required_span_recall": null,
+            "required_spans": 0,
+            "misses": [],
+            "selected_chars": 0,
+            "required_chars": 0,
+            "required_chars_retained": 0,
+            "irrelevant_chars": 3741,
+            "irrelevant_retained_chars": 0,
+            "nonrequired_retained_chars": 0,
+            "positive_retained_chars": 0,
+            "neighbor_only_retained_chars": 0,
+            "unavailable_retained_chars": 0,
+            "uncertain_retained_chars": 0,
+            "ranking_retained_chars": 0,
+            "miss_details": []
+          },
+          "metrics": {
+            "required_span_recall": null,
+            "required_spans": 0,
+            "misses": [],
+            "selected_chars": 0,
+            "required_chars": 0,
+            "required_chars_retained": 0,
+            "irrelevant_chars": 3741,
+            "irrelevant_retained_chars": 0,
+            "nonrequired_retained_chars": 0,
+            "positive_retained_chars": 0,
+            "neighbor_only_retained_chars": 0,
+            "unavailable_retained_chars": 0,
+            "uncertain_retained_chars": 0,
+            "ranking_retained_chars": 0,
+            "miss_details": []
+          },
+          "errors": [],
+          "receipts": [
+            {
+              "request": 2,
+              "questions": 2,
+              "reserved_tokens": 11740,
+              "status": "ok",
+              "requested_model": "jev-latest",
+              "model": "jev-1.14.0",
+              "usage": {
+                "input_tokens": 2151,
+                "output_tokens": 137
+              },
+              "latency_s": 0.6768
+            }
+          ],
+          "second_pass": {
+            "status": "disabled"
+          },
+          "existence": {
+            "probability": 0.01,
+            "outcome": "absent"
+          },
+          "choice_answer": {
+            "type": "choice",
+            "choice": "r0000",
+            "confidence": 0.6,
+            "probabilities": {
+              "r0000": 0.64,
+              "r0001": 0.01,
+              "r0002": 0.09,
+              "r0003": 0.01,
+              "r0004": 0.0,
+              "r0005": 0.02,
+              "r0006": 0.01,
+              "r0007": 0.01,
+              "r0008": 0.21
+            }
+          },
+          "top_k": 3
+        }
+      }
+    },
+    {
+      "name": "atlas-retention",
+      "source_chars": 3741,
+      "variants": {
+        "heading-direct-followup": {
+          "first_metrics": {
+            "required_span_recall": 1.0,
+            "required_spans": 4,
+            "misses": [],
+            "selected_chars": 1263,
+            "required_chars": 559,
+            "required_chars_retained": 559,
+            "irrelevant_chars": 3075,
+            "irrelevant_retained_chars": 597,
+            "nonrequired_retained_chars": 704,
+            "positive_retained_chars": 666,
+            "neighbor_only_retained_chars": 0,
+            "unavailable_retained_chars": 0,
+            "uncertain_retained_chars": 597,
+            "ranking_retained_chars": 0,
+            "miss_details": []
+          },
+          "metrics": {
+            "required_span_recall": 1.0,
+            "required_spans": 4,
+            "misses": [],
+            "selected_chars": 1263,
+            "required_chars": 559,
+            "required_chars_retained": 559,
+            "irrelevant_chars": 3075,
+            "irrelevant_retained_chars": 597,
+            "nonrequired_retained_chars": 704,
+            "positive_retained_chars": 666,
+            "neighbor_only_retained_chars": 0,
+            "unavailable_retained_chars": 0,
+            "uncertain_retained_chars": 597,
+            "ranking_retained_chars": 0,
+            "miss_details": []
+          },
+          "errors": [],
+          "receipts": [
+            {
+              "request": 1,
+              "questions": 18,
+              "reserved_tokens": 24767,
+              "status": "ok",
+              "requested_model": "jev-latest",
+              "model": "jev-1.14.0",
+              "usage": {
+                "input_tokens": 4612,
+                "output_tokens": 400
+              },
+              "latency_s": 0.6473
+            }
+          ],
+          "second_pass": {
+            "status": "disabled"
+          }
+        },
+        "heading-choice-exists-k3": {
+          "first_metrics": {
+            "required_span_recall": 0.75,
+            "required_spans": 4,
+            "misses": [
+              "clear-days"
+            ],
+            "selected_chars": 533,
+            "required_chars": 559,
+            "required_chars_retained": 451,
+            "irrelevant_chars": 3075,
+            "irrelevant_retained_chars": 0,
+            "nonrequired_retained_chars": 82,
+            "positive_retained_chars": 0,
+            "neighbor_only_retained_chars": 0,
+            "unavailable_retained_chars": 0,
+            "uncertain_retained_chars": 0,
+            "ranking_retained_chars": 533,
+            "miss_details": [
+              {
+                "name": "clear-days",
+                "missing_ranges": [
+                  [
+                    2197,
+                    2305
+                  ]
+                ]
+              }
+            ]
+          },
+          "metrics": {
+            "required_span_recall": 0.75,
+            "required_spans": 4,
+            "misses": [
+              "clear-days"
+            ],
+            "selected_chars": 533,
+            "required_chars": 559,
+            "required_chars_retained": 451,
+            "irrelevant_chars": 3075,
+            "irrelevant_retained_chars": 0,
+            "nonrequired_retained_chars": 82,
+            "positive_retained_chars": 0,
+            "neighbor_only_retained_chars": 0,
+            "unavailable_retained_chars": 0,
+            "uncertain_retained_chars": 0,
+            "ranking_retained_chars": 533,
+            "miss_details": [
+              {
+                "name": "clear-days",
+                "missing_ranges": [
+                  [
+                    2197,
+                    2305
+                  ]
+                ]
+              }
+            ]
+          },
+          "errors": [],
+          "receipts": [
+            {
+              "request": 2,
+              "questions": 2,
+              "reserved_tokens": 12046,
+              "status": "ok",
+              "requested_model": "jev-latest",
+              "model": "jev-1.14.0",
+              "usage": {
+                "input_tokens": 2196,
+                "output_tokens": 137
+              },
+              "latency_s": 0.4464
+            }
+          ],
+          "second_pass": {
+            "status": "disabled"
+          },
+          "existence": {
+            "probability": 0.99,
+            "outcome": "present"
+          },
+          "choice_answer": {
+            "type": "choice",
+            "choice": "r0000",
+            "confidence": 0.74,
+            "probabilities": {
+              "r0000": 0.77,
+              "r0001": 0.0,
+              "r0002": 0.04,
+              "r0003": 0.0,
+              "r0004": 0.0,
+              "r0005": 0.01,
+              "r0006": 0.0,
+              "r0007": 0.0,
+              "r0008": 0.18
+            }
+          },
+          "top_k": 3
+        }
+      }
+    },
+    {
+      "name": "cinder-rollout",
+      "source_chars": 3865,
+      "variants": {
+        "heading-direct-followup": {
+          "first_metrics": {
+            "required_span_recall": 1.0,
+            "required_spans": 4,
+            "misses": [],
+            "selected_chars": 790,
+            "required_chars": 710,
+            "required_chars_retained": 710,
+            "irrelevant_chars": 3075,
+            "irrelevant_retained_chars": 0,
+            "nonrequired_retained_chars": 80,
+            "positive_retained_chars": 614,
+            "neighbor_only_retained_chars": 0,
+            "unavailable_retained_chars": 0,
+            "uncertain_retained_chars": 176,
+            "ranking_retained_chars": 0,
+            "miss_details": []
+          },
+          "metrics": {
+            "required_span_recall": 1.0,
+            "required_spans": 4,
+            "misses": [],
+            "selected_chars": 790,
+            "required_chars": 710,
+            "required_chars_retained": 710,
+            "irrelevant_chars": 3075,
+            "irrelevant_retained_chars": 0,
+            "nonrequired_retained_chars": 80,
+            "positive_retained_chars": 614,
+            "neighbor_only_retained_chars": 0,
+            "unavailable_retained_chars": 0,
+            "uncertain_retained_chars": 176,
+            "ranking_retained_chars": 0,
+            "miss_details": []
+          },
+          "errors": [],
+          "receipts": [
+            {
+              "request": 1,
+              "questions": 18,
+              "reserved_tokens": 25061,
+              "status": "ok",
+              "requested_model": "jev-latest",
+              "model": "jev-1.14.0",
+              "usage": {
+                "input_tokens": 4621,
+                "output_tokens": 400
+              },
+              "latency_s": 0.4821
+            }
+          ],
+          "second_pass": {
+            "status": "disabled"
+          }
+        },
+        "heading-choice-exists-k3": {
+          "first_metrics": {
+            "required_span_recall": 0.75,
+            "required_spans": 4,
+            "misses": [
+              "lane-receipt-definition"
+            ],
+            "selected_chars": 614,
+            "required_chars": 710,
+            "required_chars_retained": 550,
+            "irrelevant_chars": 3075,
+            "irrelevant_retained_chars": 0,
+            "nonrequired_retained_chars": 64,
+            "positive_retained_chars": 0,
+            "neighbor_only_retained_chars": 0,
+            "unavailable_retained_chars": 0,
+            "uncertain_retained_chars": 0,
+            "ranking_retained_chars": 614,
+            "miss_details": [
+              {
+                "name": "lane-receipt-definition",
+                "missing_ranges": [
+                  [
+                    1622,
+                    1782
+                  ]
+                ]
+              }
+            ]
+          },
+          "metrics": {
+            "required_span_recall": 0.75,
+            "required_spans": 4,
+            "misses": [
+              "lane-receipt-definition"
+            ],
+            "selected_chars": 614,
+            "required_chars": 710,
+            "required_chars_retained": 550,
+            "irrelevant_chars": 3075,
+            "irrelevant_retained_chars": 0,
+            "nonrequired_retained_chars": 64,
+            "positive_retained_chars": 0,
+            "neighbor_only_retained_chars": 0,
+            "unavailable_retained_chars": 0,
+            "uncertain_retained_chars": 0,
+            "ranking_retained_chars": 614,
+            "miss_details": [
+              {
+                "name": "lane-receipt-definition",
+                "missing_ranges": [
+                  [
+                    1622,
+                    1782
+                  ]
+                ]
+              }
+            ]
+          },
+          "errors": [],
+          "receipts": [
+            {
+              "request": 2,
+              "questions": 2,
+              "reserved_tokens": 12194,
+              "status": "ok",
+              "requested_model": "jev-latest",
+              "model": "jev-1.14.0",
+              "usage": {
+                "input_tokens": 2217,
+                "output_tokens": 137
+              },
+              "latency_s": 0.4311
+            }
+          ],
+          "second_pass": {
+            "status": "disabled"
+          },
+          "existence": {
+            "probability": 0.99,
+            "outcome": "present"
+          },
+          "choice_answer": {
+            "type": "choice",
+            "choice": "r0000",
+            "confidence": 0.58,
+            "probabilities": {
+              "r0000": 0.63,
+              "r0001": 0.17,
+              "r0002": 0.0,
+              "r0003": 0.0,
+              "r0004": 0.02,
+              "r0005": 0.0,
+              "r0006": 0.0,
+              "r0007": 0.0,
+              "r0008": 0.18
+            }
+          },
+          "top_k": 3
+        }
+      }
+    },
+    {
+      "name": "elm-replay",
+      "source_chars": 3841,
+      "variants": {
+        "heading-direct-followup": {
+          "first_metrics": {
+            "required_span_recall": 1.0,
+            "required_spans": 4,
+            "misses": [],
+            "selected_chars": 1363,
+            "required_chars": 674,
+            "required_chars_retained": 674,
+            "irrelevant_chars": 3075,
+            "irrelevant_retained_chars": 597,
+            "nonrequired_retained_chars": 689,
+            "positive_retained_chars": 581,
+            "neighbor_only_retained_chars": 0,
+            "unavailable_retained_chars": 0,
+            "uncertain_retained_chars": 782,
+            "ranking_retained_chars": 0,
+            "miss_details": []
+          },
+          "metrics": {
+            "required_span_recall": 1.0,
+            "required_spans": 4,
+            "misses": [],
+            "selected_chars": 1363,
+            "required_chars": 674,
+            "required_chars_retained": 674,
+            "irrelevant_chars": 3075,
+            "irrelevant_retained_chars": 597,
+            "nonrequired_retained_chars": 689,
+            "positive_retained_chars": 581,
+            "neighbor_only_retained_chars": 0,
+            "unavailable_retained_chars": 0,
+            "uncertain_retained_chars": 782,
+            "ranking_retained_chars": 0,
+            "miss_details": []
+          },
+          "errors": [],
+          "receipts": [
+            {
+              "request": 1,
+              "questions": 18,
+              "reserved_tokens": 25183,
+              "status": "ok",
+              "requested_model": "jev-latest",
+              "model": "jev-1.14.0",
+              "usage": {
+                "input_tokens": 4599,
+                "output_tokens": 400
+              },
+              "latency_s": 0.4712
+            }
+          ],
+          "second_pass": {
+            "status": "disabled"
+          }
+        },
+        "heading-choice-exists-k3": {
+          "first_metrics": {
+            "required_span_recall": 0.75,
+            "required_spans": 4,
+            "misses": [
+              "recoverable-definition"
+            ],
+            "selected_chars": 581,
+            "required_chars": 674,
+            "required_chars_retained": 513,
+            "irrelevant_chars": 3075,
+            "irrelevant_retained_chars": 0,
+            "nonrequired_retained_chars": 68,
+            "positive_retained_chars": 0,
+            "neighbor_only_retained_chars": 0,
+            "unavailable_retained_chars": 0,
+            "uncertain_retained_chars": 0,
+            "ranking_retained_chars": 581,
+            "miss_details": [
+              {
+                "name": "recoverable-definition",
+                "missing_ranges": [
+                  [
+                    2214,
+                    2375
+                  ]
+                ]
+              }
+            ]
+          },
+          "metrics": {
+            "required_span_recall": 0.75,
+            "required_spans": 4,
+            "misses": [
+              "recoverable-definition"
+            ],
+            "selected_chars": 581,
+            "required_chars": 674,
+            "required_chars_retained": 513,
+            "irrelevant_chars": 3075,
+            "irrelevant_retained_chars": 0,
+            "nonrequired_retained_chars": 68,
+            "positive_retained_chars": 0,
+            "neighbor_only_retained_chars": 0,
+            "unavailable_retained_chars": 0,
+            "uncertain_retained_chars": 0,
+            "ranking_retained_chars": 581,
+            "miss_details": [
+              {
+                "name": "recoverable-definition",
+                "missing_ranges": [
+                  [
+                    2214,
+                    2375
+                  ]
+                ]
+              }
+            ]
+          },
+          "errors": [],
+          "receipts": [
+            {
+              "request": 2,
+              "questions": 2,
+              "reserved_tokens": 12168,
+              "status": "ok",
+              "requested_model": "jev-latest",
+              "model": "jev-1.14.0",
+              "usage": {
+                "input_tokens": 2203,
+                "output_tokens": 137
+              },
+              "latency_s": 0.4517
+            }
+          ],
+          "second_pass": {
+            "status": "disabled"
+          },
+          "existence": {
+            "probability": 0.99,
+            "outcome": "present"
+          },
+          "choice_answer": {
+            "type": "choice",
+            "choice": "r0000",
+            "confidence": 0.52,
+            "probabilities": {
+              "r0000": 0.57,
+              "r0001": 0.0,
+              "r0002": 0.06,
+              "r0003": 0.0,
+              "r0004": 0.0,
+              "r0005": 0.01,
+              "r0006": 0.0,
+              "r0007": 0.0,
+              "r0008": 0.36
+            }
+          },
+          "top_k": 3
+        }
+      }
+    },
+    {
+      "name": "public-contributor",
+      "source_chars": 5793,
+      "variants": {
+        "heading-direct-followup": {
+          "first_metrics": {
+            "required_span_recall": 1.0,
+            "required_spans": 6,
+            "misses": [],
+            "selected_chars": 5159,
+            "required_chars": 937,
+            "required_chars_retained": 937,
+            "irrelevant_chars": 2495,
+            "irrelevant_retained_chars": 2495,
+            "nonrequired_retained_chars": 4222,
+            "positive_retained_chars": 1313,
+            "neighbor_only_retained_chars": 0,
+            "unavailable_retained_chars": 0,
+            "uncertain_retained_chars": 3846,
+            "ranking_retained_chars": 0,
+            "miss_details": []
+          },
+          "metrics": {
+            "required_span_recall": 1.0,
+            "required_spans": 6,
+            "misses": [],
+            "selected_chars": 5159,
+            "required_chars": 937,
+            "required_chars_retained": 937,
+            "irrelevant_chars": 2495,
+            "irrelevant_retained_chars": 2495,
+            "nonrequired_retained_chars": 4222,
+            "positive_retained_chars": 1313,
+            "neighbor_only_retained_chars": 0,
+            "unavailable_retained_chars": 0,
+            "uncertain_retained_chars": 3846,
+            "ranking_retained_chars": 0,
+            "miss_details": []
+          },
+          "errors": [],
+          "receipts": [
+            {
+              "request": 1,
+              "questions": 24,
+              "reserved_tokens": 38289,
+              "status": "ok",
+              "requested_model": "jev-latest",
+              "model": "jev-1.14.0",
+              "usage": {
+                "input_tokens": 8405,
+                "output_tokens": 532
+              },
+              "latency_s": 0.603
+            },
+            {
+              "request": 2,
+              "questions": 2,
+              "reserved_tokens": 16638,
+              "status": "ok",
+              "requested_model": "jev-latest",
+              "model": "jev-1.14.0",
+              "usage": {
+                "input_tokens": 3804,
+                "output_tokens": 48
+              },
+              "latency_s": 0.4257
+            }
+          ],
+          "second_pass": {
+            "status": "disabled"
+          }
+        },
+        "heading-choice-exists-k3": {
+          "first_metrics": {
+            "required_span_recall": 1.0,
+            "required_spans": 6,
+            "misses": [],
+            "selected_chars": 1470,
+            "required_chars": 937,
+            "required_chars_retained": 937,
+            "irrelevant_chars": 2495,
+            "irrelevant_retained_chars": 0,
+            "nonrequired_retained_chars": 533,
+            "positive_retained_chars": 0,
+            "neighbor_only_retained_chars": 0,
+            "unavailable_retained_chars": 0,
+            "uncertain_retained_chars": 0,
+            "ranking_retained_chars": 1470,
+            "miss_details": []
+          },
+          "metrics": {
+            "required_span_recall": 1.0,
+            "required_spans": 6,
+            "misses": [],
+            "selected_chars": 1470,
+            "required_chars": 937,
+            "required_chars_retained": 937,
+            "irrelevant_chars": 2495,
+            "irrelevant_retained_chars": 0,
+            "nonrequired_retained_chars": 533,
+            "positive_retained_chars": 0,
+            "neighbor_only_retained_chars": 0,
+            "unavailable_retained_chars": 0,
+            "uncertain_retained_chars": 0,
+            "ranking_retained_chars": 1470,
+            "miss_details": []
+          },
+          "errors": [],
+          "receipts": [
+            {
+              "request": 3,
+              "questions": 2,
+              "reserved_tokens": 16675,
+              "status": "ok",
+              "requested_model": "jev-latest",
+              "model": "jev-1.14.0",
+              "usage": {
+                "input_tokens": 3856,
+                "output_tokens": 181
+              },
+              "latency_s": 0.5241
+            }
+          ],
+          "second_pass": {
+            "status": "disabled"
+          },
+          "existence": {
+            "probability": 0.99,
+            "outcome": "present"
+          },
+          "choice_answer": {
+            "type": "choice",
+            "choice": "r0008",
+            "confidence": 0.87,
+            "probabilities": {
+              "r0000": 0.0,
+              "r0001": 0.0,
+              "r0002": 0.0,
+              "r0003": 0.0,
+              "r0004": 0.0,
+              "r0005": 0.0,
+              "r0006": 0.0,
+              "r0007": 0.12,
+              "r0008": 0.88,
+              "r0009": 0.0,
+              "r0010": 0.0,
+              "r0011": 0.0,
+              "r0012": 0.0
+            }
+          },
+          "top_k": 3
+        }
+      }
+    }
+  ],
+  "receipts": [
+    {
+      "request": 1,
+      "questions": 18,
+      "reserved_tokens": 24767,
+      "status": "ok",
+      "requested_model": "jev-latest",
+      "model": "jev-1.14.0",
+      "usage": {
+        "input_tokens": 4612,
+        "output_tokens": 400
+      },
+      "latency_s": 0.6473,
+      "session_request": 1
+    },
+    {
+      "request": 2,
+      "questions": 2,
+      "reserved_tokens": 12046,
+      "status": "ok",
+      "requested_model": "jev-latest",
+      "model": "jev-1.14.0",
+      "usage": {
+        "input_tokens": 2196,
+        "output_tokens": 137
+      },
+      "latency_s": 0.4464,
+      "session_request": 2
+    },
+    {
+      "request": 1,
+      "questions": 18,
+      "reserved_tokens": 25061,
+      "status": "ok",
+      "requested_model": "jev-latest",
+      "model": "jev-1.14.0",
+      "usage": {
+        "input_tokens": 4621,
+        "output_tokens": 400
+      },
+      "latency_s": 0.4821,
+      "session_request": 3
+    },
+    {
+      "request": 2,
+      "questions": 2,
+      "reserved_tokens": 12194,
+      "status": "ok",
+      "requested_model": "jev-latest",
+      "model": "jev-1.14.0",
+      "usage": {
+        "input_tokens": 2217,
+        "output_tokens": 137
+      },
+      "latency_s": 0.4311,
+      "session_request": 4
+    },
+    {
+      "request": 1,
+      "questions": 18,
+      "reserved_tokens": 25183,
+      "status": "ok",
+      "requested_model": "jev-latest",
+      "model": "jev-1.14.0",
+      "usage": {
+        "input_tokens": 4599,
+        "output_tokens": 400
+      },
+      "latency_s": 0.4712,
+      "session_request": 5
+    },
+    {
+      "request": 2,
+      "questions": 2,
+      "reserved_tokens": 12168,
+      "status": "ok",
+      "requested_model": "jev-latest",
+      "model": "jev-1.14.0",
+      "usage": {
+        "input_tokens": 2203,
+        "output_tokens": 137
+      },
+      "latency_s": 0.4517,
+      "session_request": 6
+    },
+    {
+      "request": 1,
+      "questions": 24,
+      "reserved_tokens": 38289,
+      "status": "ok",
+      "requested_model": "jev-latest",
+      "model": "jev-1.14.0",
+      "usage": {
+        "input_tokens": 8405,
+        "output_tokens": 532
+      },
+      "latency_s": 0.603,
+      "session_request": 7
+    },
+    {
+      "request": 2,
+      "questions": 2,
+      "reserved_tokens": 16638,
+      "status": "ok",
+      "requested_model": "jev-latest",
+      "model": "jev-1.14.0",
+      "usage": {
+        "input_tokens": 3804,
+        "output_tokens": 48
+      },
+      "latency_s": 0.4257,
+      "session_request": 8
+    },
+    {
+      "request": 3,
+      "questions": 2,
+      "reserved_tokens": 16675,
+      "status": "ok",
+      "requested_model": "jev-latest",
+      "model": "jev-1.14.0",
+      "usage": {
+        "input_tokens": 3856,
+        "output_tokens": 181
+      },
+      "latency_s": 0.5241,
+      "session_request": 9
+    },
+    {
+      "request": 1,
+      "questions": 18,
+      "reserved_tokens": 22829,
+      "status": "ok",
+      "requested_model": "jev-latest",
+      "model": "jev-1.14.0",
+      "usage": {
+        "input_tokens": 4327,
+        "output_tokens": 400
+      },
+      "latency_s": 1.2212,
+      "session_request": 10
+    },
+    {
+      "request": 2,
+      "questions": 2,
+      "reserved_tokens": 11740,
+      "status": "ok",
+      "requested_model": "jev-latest",
+      "model": "jev-1.14.0",
+      "usage": {
+        "input_tokens": 2151,
+        "output_tokens": 137
+      },
+      "latency_s": 0.6768,
+      "session_request": 11
+    }
+  ]
+}
