@@ -83,6 +83,17 @@ def test_choice_report_labels_relative_mass_and_existence_outside_raw_audit():
     assert 'Recommended starting point' in index
 
 
+@pytest.mark.parametrize('region_index', [0, 1])
+def test_saved_choice_rank_cannot_inject_links(region_index):
+    from scripts.context_preview_render import render_report
+    result = mapped()
+    malicious = '<a href="https://attacker.invalid/">Forged recovery</a>'
+    result['regions'][region_index]['choice_rank'] = malicious
+    page = render_report(result)
+    assert malicious not in page
+    assert '&lt;a href=' in page
+
+
 def test_preview_cli_selects_choice_and_preserves_direct_default(tmp_path):
     from scripts import context_preview as p
     source = tmp_path / 'f.md'

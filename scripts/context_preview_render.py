@@ -53,6 +53,7 @@ def region_html(row, index):
     coordinates = f'chars [{row["start"]}, {row["end"]}) · {row["end"] - row["start"]} characters'
     if row.get('choice_probability') is not None:
         coordinates += f" · Rank {row['choice_rank']} · Relative Choice mass {row['choice_probability']:.4f}"
+    coordinates = esc(coordinates)
     text = f'<pre data-source-start="{row["start"]}" data-source-end="{row["end"]}">{esc(row["text"])}</pre>'
     audit = disclosure('Probabilities and region evidence', {k: v for k, v in row.items() if k != 'text'})
     if not row['selected']:
