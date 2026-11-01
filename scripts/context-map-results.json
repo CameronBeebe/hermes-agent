@@ -1,0 +1,2267 @@
+{
+  "warning": "Exploratory span metrics only, no significance or downstream task-quality claim.",
+  "first_pass": {
+    "heading-direct": {
+      "cases": 4,
+      "source_chars": 17240,
+      "covered_spans": 18,
+      "required_spans": 18,
+      "selected_chars": 7978,
+      "required_chars": 2880,
+      "required_chars_retained": 2880,
+      "irrelevant_chars": 11720,
+      "irrelevant_retained_chars": 3092,
+      "nonrequired_retained_chars": 5098,
+      "positive_retained_chars": 3350,
+      "neighbor_only_retained_chars": 0,
+      "unavailable_retained_chars": 0,
+      "uncertain_retained_chars": 4628
+    },
+    "heading-enriched": {
+      "cases": 4,
+      "source_chars": 17240,
+      "covered_spans": 18,
+      "required_spans": 18,
+      "selected_chars": 12500,
+      "required_chars": 2880,
+      "required_chars_retained": 2880,
+      "irrelevant_chars": 11720,
+      "irrelevant_retained_chars": 7389,
+      "nonrequired_retained_chars": 9620,
+      "positive_retained_chars": 3535,
+      "neighbor_only_retained_chars": 3700,
+      "unavailable_retained_chars": 0,
+      "uncertain_retained_chars": 5265
+    },
+    "window-direct": {
+      "cases": 4,
+      "source_chars": 17240,
+      "covered_spans": 18,
+      "required_spans": 18,
+      "selected_chars": 13740,
+      "required_chars": 2880,
+      "required_chars_retained": 2880,
+      "irrelevant_chars": 11720,
+      "irrelevant_retained_chars": 8220,
+      "nonrequired_retained_chars": 10860,
+      "positive_retained_chars": 5847,
+      "neighbor_only_retained_chars": 0,
+      "unavailable_retained_chars": 0,
+      "uncertain_retained_chars": 7893
+    },
+    "window-enriched": {
+      "cases": 4,
+      "source_chars": 17240,
+      "covered_spans": 18,
+      "required_spans": 18,
+      "selected_chars": 14440,
+      "required_chars": 2880,
+      "required_chars_retained": 2880,
+      "irrelevant_chars": 11720,
+      "irrelevant_retained_chars": 8920,
+      "nonrequired_retained_chars": 11560,
+      "positive_retained_chars": 8647,
+      "neighbor_only_retained_chars": 0,
+      "unavailable_retained_chars": 0,
+      "uncertain_retained_chars": 5793
+    }
+  },
+  "after_recovery": {
+    "heading-direct": {
+      "cases": 4,
+      "source_chars": 17240,
+      "covered_spans": 18,
+      "required_spans": 18,
+      "selected_chars": 7978,
+      "required_chars": 2880,
+      "required_chars_retained": 2880,
+      "irrelevant_chars": 11720,
+      "irrelevant_retained_chars": 3092,
+      "nonrequired_retained_chars": 5098,
+      "positive_retained_chars": 3350,
+      "neighbor_only_retained_chars": 0,
+      "unavailable_retained_chars": 0,
+      "uncertain_retained_chars": 4628
+    },
+    "heading-enriched": {
+      "cases": 4,
+      "source_chars": 17240,
+      "covered_spans": 18,
+      "required_spans": 18,
+      "selected_chars": 12500,
+      "required_chars": 2880,
+      "required_chars_retained": 2880,
+      "irrelevant_chars": 11720,
+      "irrelevant_retained_chars": 7389,
+      "nonrequired_retained_chars": 9620,
+      "positive_retained_chars": 3535,
+      "neighbor_only_retained_chars": 3700,
+      "unavailable_retained_chars": 0,
+      "uncertain_retained_chars": 5265
+    },
+    "window-direct": {
+      "cases": 4,
+      "source_chars": 17240,
+      "covered_spans": 18,
+      "required_spans": 18,
+      "selected_chars": 13740,
+      "required_chars": 2880,
+      "required_chars_retained": 2880,
+      "irrelevant_chars": 11720,
+      "irrelevant_retained_chars": 8220,
+      "nonrequired_retained_chars": 10860,
+      "positive_retained_chars": 5847,
+      "neighbor_only_retained_chars": 0,
+      "unavailable_retained_chars": 0,
+      "uncertain_retained_chars": 7893
+    },
+    "window-enriched": {
+      "cases": 4,
+      "source_chars": 17240,
+      "covered_spans": 18,
+      "required_spans": 18,
+      "selected_chars": 14440,
+      "required_chars": 2880,
+      "required_chars_retained": 2880,
+      "irrelevant_chars": 11720,
+      "irrelevant_retained_chars": 8920,
+      "nonrequired_retained_chars": 11560,
+      "positive_retained_chars": 8647,
+      "neighbor_only_retained_chars": 0,
+      "unavailable_retained_chars": 0,
+      "uncertain_retained_chars": 5793
+    }
+  },
+  "synthetic_only": {
+    "heading-direct": {
+      "cases": 3,
+      "source_chars": 11447,
+      "covered_spans": 12,
+      "required_spans": 12,
+      "selected_chars": 2819,
+      "required_chars": 1943,
+      "required_chars_retained": 1943,
+      "irrelevant_chars": 9225,
+      "irrelevant_retained_chars": 597,
+      "nonrequired_retained_chars": 876,
+      "positive_retained_chars": 2037,
+      "neighbor_only_retained_chars": 0,
+      "unavailable_retained_chars": 0,
+      "uncertain_retained_chars": 782
+    },
+    "heading-enriched": {
+      "cases": 3,
+      "source_chars": 11447,
+      "covered_spans": 12,
+      "required_spans": 12,
+      "selected_chars": 7116,
+      "required_chars": 1943,
+      "required_chars_retained": 1943,
+      "irrelevant_chars": 9225,
+      "irrelevant_retained_chars": 4894,
+      "nonrequired_retained_chars": 5173,
+      "positive_retained_chars": 2222,
+      "neighbor_only_retained_chars": 3700,
+      "unavailable_retained_chars": 0,
+      "uncertain_retained_chars": 1194
+    },
+    "window-direct": {
+      "cases": 3,
+      "source_chars": 11447,
+      "covered_spans": 12,
+      "required_spans": 12,
+      "selected_chars": 7947,
+      "required_chars": 1943,
+      "required_chars_retained": 1943,
+      "irrelevant_chars": 9225,
+      "irrelevant_retained_chars": 5725,
+      "nonrequired_retained_chars": 6004,
+      "positive_retained_chars": 4447,
+      "neighbor_only_retained_chars": 0,
+      "unavailable_retained_chars": 0,
+      "uncertain_retained_chars": 3500
+    },
+    "window-enriched": {
+      "cases": 3,
+      "source_chars": 11447,
+      "covered_spans": 12,
+      "required_spans": 12,
+      "selected_chars": 8647,
+      "required_chars": 1943,
+      "required_chars_retained": 1943,
+      "irrelevant_chars": 9225,
+      "irrelevant_retained_chars": 6425,
+      "nonrequired_retained_chars": 6704,
+      "positive_retained_chars": 6547,
+      "neighbor_only_retained_chars": 0,
+      "unavailable_retained_chars": 0,
+      "uncertain_retained_chars": 2100
+    }
+  },
+  "original_including_public_admission_failure": {
+    "heading-direct": {
+      "cases": 4,
+      "source_chars": 17240,
+      "covered_spans": 18,
+      "required_spans": 18,
+      "selected_chars": 7978,
+      "required_chars": 2880,
+      "required_chars_retained": 2880,
+      "irrelevant_chars": 11720,
+      "irrelevant_retained_chars": 3092,
+      "nonrequired_retained_chars": 5098,
+      "positive_retained_chars": 3350,
+      "neighbor_only_retained_chars": 0,
+      "unavailable_retained_chars": 0,
+      "uncertain_retained_chars": 4628
+    },
+    "heading-enriched": {
+      "cases": 4,
+      "source_chars": 17240,
+      "covered_spans": 18,
+      "required_spans": 18,
+      "selected_chars": 12909,
+      "required_chars": 2880,
+      "required_chars_retained": 2880,
+      "irrelevant_chars": 11720,
+      "irrelevant_retained_chars": 7389,
+      "nonrequired_retained_chars": 10029,
+      "positive_retained_chars": 2222,
+      "neighbor_only_retained_chars": 3700,
+      "unavailable_retained_chars": 5793,
+      "uncertain_retained_chars": 1194
+    },
+    "window-direct": {
+      "cases": 4,
+      "source_chars": 17240,
+      "covered_spans": 18,
+      "required_spans": 18,
+      "selected_chars": 13740,
+      "required_chars": 2880,
+      "required_chars_retained": 2880,
+      "irrelevant_chars": 11720,
+      "irrelevant_retained_chars": 8220,
+      "nonrequired_retained_chars": 10860,
+      "positive_retained_chars": 5847,
+      "neighbor_only_retained_chars": 0,
+      "unavailable_retained_chars": 0,
+      "uncertain_retained_chars": 7893
+    },
+    "window-enriched": {
+      "cases": 4,
+      "source_chars": 17240,
+      "covered_spans": 18,
+      "required_spans": 18,
+      "selected_chars": 14440,
+      "required_chars": 2880,
+      "required_chars_retained": 2880,
+      "irrelevant_chars": 11720,
+      "irrelevant_retained_chars": 8920,
+      "nonrequired_retained_chars": 11560,
+      "positive_retained_chars": 8647,
+      "neighbor_only_retained_chars": 0,
+      "unavailable_retained_chars": 0,
+      "uncertain_retained_chars": 5793
+    }
+  },
+  "pair_comparison": {
+    "heading-enriched-pairs": {
+      "cases": 3,
+      "source_chars": 11447,
+      "covered_spans": 12,
+      "required_spans": 12,
+      "selected_chars": 3416,
+      "required_chars": 1943,
+      "required_chars_retained": 1943,
+      "irrelevant_chars": 9225,
+      "irrelevant_retained_chars": 1194,
+      "nonrequired_retained_chars": 1473,
+      "positive_retained_chars": 2222,
+      "neighbor_only_retained_chars": 0,
+      "unavailable_retained_chars": 0,
+      "uncertain_retained_chars": 1194
+    }
+  },
+  "cases": [
+    {
+      "name": "atlas-retention",
+      "source_chars": 3741,
+      "variants": {
+        "heading-direct": {
+          "first_metrics": {
+            "required_span_recall": 1.0,
+            "required_spans": 4,
+            "misses": [],
+            "selected_chars": 666,
+            "required_chars": 559,
+            "required_chars_retained": 559,
+            "irrelevant_chars": 3075,
+            "irrelevant_retained_chars": 0,
+            "nonrequired_retained_chars": 107,
+            "positive_retained_chars": 666,
+            "neighbor_only_retained_chars": 0,
+            "unavailable_retained_chars": 0,
+            "uncertain_retained_chars": 0,
+            "miss_details": []
+          },
+          "metrics": {
+            "required_span_recall": 1.0,
+            "required_spans": 4,
+            "misses": [],
+            "selected_chars": 666,
+            "required_chars": 559,
+            "required_chars_retained": 559,
+            "irrelevant_chars": 3075,
+            "irrelevant_retained_chars": 0,
+            "nonrequired_retained_chars": 107,
+            "positive_retained_chars": 666,
+            "neighbor_only_retained_chars": 0,
+            "unavailable_retained_chars": 0,
+            "uncertain_retained_chars": 0,
+            "miss_details": []
+          },
+          "errors": [],
+          "receipts": [
+            {
+              "request": 1,
+              "questions": 18,
+              "reserved_tokens": 24767,
+              "status": "ok",
+              "requested_model": "jev-latest",
+              "model": "jev-1.14.0",
+              "usage": {
+                "input_tokens": 4612,
+                "output_tokens": 400
+              },
+              "latency_s": 0.4396
+            }
+          ],
+          "second_pass": {
+            "status": "disabled"
+          }
+        },
+        "heading-enriched": {
+          "first_metrics": {
+            "required_span_recall": 1.0,
+            "required_spans": 4,
+            "misses": [],
+            "selected_chars": 3123,
+            "required_chars": 559,
+            "required_chars_retained": 559,
+            "irrelevant_chars": 3075,
+            "irrelevant_retained_chars": 2457,
+            "nonrequired_retained_chars": 2564,
+            "positive_retained_chars": 666,
+            "neighbor_only_retained_chars": 1860,
+            "unavailable_retained_chars": 0,
+            "uncertain_retained_chars": 597,
+            "miss_details": []
+          },
+          "metrics": {
+            "required_span_recall": 1.0,
+            "required_spans": 4,
+            "misses": [],
+            "selected_chars": 3123,
+            "required_chars": 559,
+            "required_chars_retained": 559,
+            "irrelevant_chars": 3075,
+            "irrelevant_retained_chars": 2457,
+            "nonrequired_retained_chars": 2564,
+            "positive_retained_chars": 666,
+            "neighbor_only_retained_chars": 1860,
+            "unavailable_retained_chars": 0,
+            "uncertain_retained_chars": 597,
+            "miss_details": []
+          },
+          "errors": [],
+          "receipts": [
+            {
+              "request": 2,
+              "questions": 54,
+              "reserved_tokens": 54749,
+              "status": "ok",
+              "requested_model": "jev-latest",
+              "model": "jev-1.14.0",
+              "usage": {
+                "input_tokens": 10339,
+                "output_tokens": 1228
+              },
+              "latency_s": 0.5165
+            },
+            {
+              "request": 3,
+              "questions": 1,
+              "reserved_tokens": 11430,
+              "status": "ok",
+              "requested_model": "jev-latest",
+              "model": "jev-1.14.0",
+              "usage": {
+                "input_tokens": 2121,
+                "output_tokens": 27
+              },
+              "latency_s": 0.3818
+            }
+          ],
+          "second_pass": {
+            "status": "scored",
+            "model": "jev-1.14.0",
+            "usage": {
+              "input_tokens": 2121,
+              "output_tokens": 27
+            },
+            "warning": "Dependency judgments only; not independent proof of packet sufficiency."
+          }
+        },
+        "window-direct": {
+          "first_metrics": {
+            "required_span_recall": 1.0,
+            "required_spans": 4,
+            "misses": [],
+            "selected_chars": 2341,
+            "required_chars": 559,
+            "required_chars_retained": 559,
+            "irrelevant_chars": 3075,
+            "irrelevant_retained_chars": 1675,
+            "nonrequired_retained_chars": 1782,
+            "positive_retained_chars": 1641,
+            "neighbor_only_retained_chars": 0,
+            "unavailable_retained_chars": 0,
+            "uncertain_retained_chars": 700,
+            "miss_details": []
+          },
+          "metrics": {
+            "required_span_recall": 1.0,
+            "required_spans": 4,
+            "misses": [],
+            "selected_chars": 2341,
+            "required_chars": 559,
+            "required_chars_retained": 559,
+            "irrelevant_chars": 3075,
+            "irrelevant_retained_chars": 1675,
+            "nonrequired_retained_chars": 1782,
+            "positive_retained_chars": 1641,
+            "neighbor_only_retained_chars": 0,
+            "unavailable_retained_chars": 0,
+            "uncertain_retained_chars": 700,
+            "miss_details": []
+          },
+          "errors": [],
+          "receipts": [
+            {
+              "request": 4,
+              "questions": 12,
+              "reserved_tokens": 19328,
+              "status": "ok",
+              "requested_model": "jev-latest",
+              "model": "jev-1.14.0",
+              "usage": {
+                "input_tokens": 3448,
+                "output_tokens": 268
+              },
+              "latency_s": 0.4356
+            }
+          ],
+          "second_pass": {
+            "status": "disabled"
+          }
+        },
+        "window-enriched": {
+          "first_metrics": {
+            "required_span_recall": 1.0,
+            "required_spans": 4,
+            "misses": [],
+            "selected_chars": 3041,
+            "required_chars": 559,
+            "required_chars_retained": 559,
+            "irrelevant_chars": 3075,
+            "irrelevant_retained_chars": 2375,
+            "nonrequired_retained_chars": 2482,
+            "positive_retained_chars": 2341,
+            "neighbor_only_retained_chars": 0,
+            "unavailable_retained_chars": 0,
+            "uncertain_retained_chars": 700,
+            "miss_details": []
+          },
+          "metrics": {
+            "required_span_recall": 1.0,
+            "required_spans": 4,
+            "misses": [],
+            "selected_chars": 3041,
+            "required_chars": 559,
+            "required_chars_retained": 559,
+            "irrelevant_chars": 3075,
+            "irrelevant_retained_chars": 2375,
+            "nonrequired_retained_chars": 2482,
+            "positive_retained_chars": 2341,
+            "neighbor_only_retained_chars": 0,
+            "unavailable_retained_chars": 0,
+            "uncertain_retained_chars": 700,
+            "miss_details": []
+          },
+          "errors": [],
+          "receipts": [
+            {
+              "request": 5,
+              "questions": 36,
+              "reserved_tokens": 39324,
+              "status": "ok",
+              "requested_model": "jev-latest",
+              "model": "jev-1.14.0",
+              "usage": {
+                "input_tokens": 7274,
+                "output_tokens": 820
+              },
+              "latency_s": 0.4905
+            },
+            {
+              "request": 6,
+              "questions": 1,
+              "reserved_tokens": 10726,
+              "status": "ok",
+              "requested_model": "jev-latest",
+              "model": "jev-1.14.0",
+              "usage": {
+                "input_tokens": 1834,
+                "output_tokens": 27
+              },
+              "latency_s": 0.3238
+            }
+          ],
+          "second_pass": {
+            "status": "scored",
+            "model": "jev-1.14.0",
+            "usage": {
+              "input_tokens": 1834,
+              "output_tokens": 27
+            },
+            "warning": "Dependency judgments only; not independent proof of packet sufficiency."
+          }
+        }
+      }
+    },
+    {
+      "name": "cinder-rollout",
+      "source_chars": 3865,
+      "variants": {
+        "heading-direct": {
+          "first_metrics": {
+            "required_span_recall": 1.0,
+            "required_spans": 4,
+            "misses": [],
+            "selected_chars": 790,
+            "required_chars": 710,
+            "required_chars_retained": 710,
+            "irrelevant_chars": 3075,
+            "irrelevant_retained_chars": 0,
+            "nonrequired_retained_chars": 80,
+            "positive_retained_chars": 790,
+            "neighbor_only_retained_chars": 0,
+            "unavailable_retained_chars": 0,
+            "uncertain_retained_chars": 0,
+            "miss_details": []
+          },
+          "metrics": {
+            "required_span_recall": 1.0,
+            "required_spans": 4,
+            "misses": [],
+            "selected_chars": 790,
+            "required_chars": 710,
+            "required_chars_retained": 710,
+            "irrelevant_chars": 3075,
+            "irrelevant_retained_chars": 0,
+            "nonrequired_retained_chars": 80,
+            "positive_retained_chars": 790,
+            "neighbor_only_retained_chars": 0,
+            "unavailable_retained_chars": 0,
+            "uncertain_retained_chars": 0,
+            "miss_details": []
+          },
+          "errors": [],
+          "receipts": [
+            {
+              "request": 1,
+              "questions": 18,
+              "reserved_tokens": 25061,
+              "status": "ok",
+              "requested_model": "jev-latest",
+              "model": "jev-1.14.0",
+              "usage": {
+                "input_tokens": 4621,
+                "output_tokens": 400
+              },
+              "latency_s": 0.4734
+            }
+          ],
+          "second_pass": {
+            "status": "disabled"
+          }
+        },
+        "heading-enriched": {
+          "first_metrics": {
+            "required_span_recall": 1.0,
+            "required_spans": 4,
+            "misses": [],
+            "selected_chars": 1401,
+            "required_chars": 710,
+            "required_chars_retained": 710,
+            "irrelevant_chars": 3075,
+            "irrelevant_retained_chars": 611,
+            "nonrequired_retained_chars": 691,
+            "positive_retained_chars": 790,
+            "neighbor_only_retained_chars": 611,
+            "unavailable_retained_chars": 0,
+            "uncertain_retained_chars": 0,
+            "miss_details": []
+          },
+          "metrics": {
+            "required_span_recall": 1.0,
+            "required_spans": 4,
+            "misses": [],
+            "selected_chars": 1401,
+            "required_chars": 710,
+            "required_chars_retained": 710,
+            "irrelevant_chars": 3075,
+            "irrelevant_retained_chars": 611,
+            "nonrequired_retained_chars": 691,
+            "positive_retained_chars": 790,
+            "neighbor_only_retained_chars": 611,
+            "unavailable_retained_chars": 0,
+            "uncertain_retained_chars": 0,
+            "miss_details": []
+          },
+          "errors": [],
+          "receipts": [
+            {
+              "request": 2,
+              "questions": 54,
+              "reserved_tokens": 55375,
+              "status": "ok",
+              "requested_model": "jev-latest",
+              "model": "jev-1.14.0",
+              "usage": {
+                "input_tokens": 10320,
+                "output_tokens": 1228
+              },
+              "latency_s": 0.4922
+            },
+            {
+              "request": 3,
+              "questions": 4,
+              "reserved_tokens": 14351,
+              "status": "ok",
+              "requested_model": "jev-latest",
+              "model": "jev-1.14.0",
+              "usage": {
+                "input_tokens": 2686,
+                "output_tokens": 96
+              },
+              "latency_s": 0.3708
+            }
+          ],
+          "second_pass": {
+            "status": "scored",
+            "model": "jev-1.14.0",
+            "usage": {
+              "input_tokens": 2686,
+              "output_tokens": 96
+            },
+            "warning": "Dependency judgments only; not independent proof of packet sufficiency."
+          }
+        },
+        "window-direct": {
+          "first_metrics": {
+            "required_span_recall": 1.0,
+            "required_spans": 4,
+            "misses": [],
+            "selected_chars": 1765,
+            "required_chars": 710,
+            "required_chars_retained": 710,
+            "irrelevant_chars": 3075,
+            "irrelevant_retained_chars": 975,
+            "nonrequired_retained_chars": 1055,
+            "positive_retained_chars": 1065,
+            "neighbor_only_retained_chars": 0,
+            "unavailable_retained_chars": 0,
+            "uncertain_retained_chars": 700,
+            "miss_details": []
+          },
+          "metrics": {
+            "required_span_recall": 1.0,
+            "required_spans": 4,
+            "misses": [],
+            "selected_chars": 1765,
+            "required_chars": 710,
+            "required_chars_retained": 710,
+            "irrelevant_chars": 3075,
+            "irrelevant_retained_chars": 975,
+            "nonrequired_retained_chars": 1055,
+            "positive_retained_chars": 1065,
+            "neighbor_only_retained_chars": 0,
+            "unavailable_retained_chars": 0,
+            "uncertain_retained_chars": 700,
+            "miss_details": []
+          },
+          "errors": [],
+          "receipts": [
+            {
+              "request": 4,
+              "questions": 12,
+              "reserved_tokens": 19563,
+              "status": "ok",
+              "requested_model": "jev-latest",
+              "model": "jev-1.14.0",
+              "usage": {
+                "input_tokens": 3454,
+                "output_tokens": 268
+              },
+              "latency_s": 0.4389
+            }
+          ],
+          "second_pass": {
+            "status": "disabled"
+          }
+        },
+        "window-enriched": {
+          "first_metrics": {
+            "required_span_recall": 1.0,
+            "required_spans": 4,
+            "misses": [],
+            "selected_chars": 1765,
+            "required_chars": 710,
+            "required_chars_retained": 710,
+            "irrelevant_chars": 3075,
+            "irrelevant_retained_chars": 975,
+            "nonrequired_retained_chars": 1055,
+            "positive_retained_chars": 1765,
+            "neighbor_only_retained_chars": 0,
+            "unavailable_retained_chars": 0,
+            "uncertain_retained_chars": 0,
+            "miss_details": []
+          },
+          "metrics": {
+            "required_span_recall": 1.0,
+            "required_spans": 4,
+            "misses": [],
+            "selected_chars": 1765,
+            "required_chars": 710,
+            "required_chars_retained": 710,
+            "irrelevant_chars": 3075,
+            "irrelevant_retained_chars": 975,
+            "nonrequired_retained_chars": 1055,
+            "positive_retained_chars": 1765,
+            "neighbor_only_retained_chars": 0,
+            "unavailable_retained_chars": 0,
+            "uncertain_retained_chars": 0,
+            "miss_details": []
+          },
+          "errors": [],
+          "receipts": [
+            {
+              "request": 5,
+              "questions": 36,
+              "reserved_tokens": 39775,
+              "status": "ok",
+              "requested_model": "jev-latest",
+              "model": "jev-1.14.0",
+              "usage": {
+                "input_tokens": 7256,
+                "output_tokens": 820
+              },
+              "latency_s": 0.4452
+            },
+            {
+              "request": 6,
+              "questions": 3,
+              "reserved_tokens": 12673,
+              "status": "ok",
+              "requested_model": "jev-latest",
+              "model": "jev-1.14.0",
+              "usage": {
+                "input_tokens": 2184,
+                "output_tokens": 73
+              },
+              "latency_s": 0.3258
+            }
+          ],
+          "second_pass": {
+            "status": "scored",
+            "model": "jev-1.14.0",
+            "usage": {
+              "input_tokens": 2184,
+              "output_tokens": 73
+            },
+            "warning": "Dependency judgments only; not independent proof of packet sufficiency."
+          }
+        }
+      }
+    },
+    {
+      "name": "elm-replay",
+      "source_chars": 3841,
+      "variants": {
+        "heading-direct": {
+          "first_metrics": {
+            "required_span_recall": 1.0,
+            "required_spans": 4,
+            "misses": [],
+            "selected_chars": 1363,
+            "required_chars": 674,
+            "required_chars_retained": 674,
+            "irrelevant_chars": 3075,
+            "irrelevant_retained_chars": 597,
+            "nonrequired_retained_chars": 689,
+            "positive_retained_chars": 581,
+            "neighbor_only_retained_chars": 0,
+            "unavailable_retained_chars": 0,
+            "uncertain_retained_chars": 782,
+            "miss_details": []
+          },
+          "metrics": {
+            "required_span_recall": 1.0,
+            "required_spans": 4,
+            "misses": [],
+            "selected_chars": 1363,
+            "required_chars": 674,
+            "required_chars_retained": 674,
+            "irrelevant_chars": 3075,
+            "irrelevant_retained_chars": 597,
+            "nonrequired_retained_chars": 689,
+            "positive_retained_chars": 581,
+            "neighbor_only_retained_chars": 0,
+            "unavailable_retained_chars": 0,
+            "uncertain_retained_chars": 782,
+            "miss_details": []
+          },
+          "errors": [],
+          "receipts": [
+            {
+              "request": 1,
+              "questions": 18,
+              "reserved_tokens": 25183,
+              "status": "ok",
+              "requested_model": "jev-latest",
+              "model": "jev-1.14.0",
+              "usage": {
+                "input_tokens": 4599,
+                "output_tokens": 400
+              },
+              "latency_s": 0.382
+            }
+          ],
+          "second_pass": {
+            "status": "disabled"
+          }
+        },
+        "heading-enriched": {
+          "first_metrics": {
+            "required_span_recall": 1.0,
+            "required_spans": 4,
+            "misses": [],
+            "selected_chars": 2592,
+            "required_chars": 674,
+            "required_chars_retained": 674,
+            "irrelevant_chars": 3075,
+            "irrelevant_retained_chars": 1826,
+            "nonrequired_retained_chars": 1918,
+            "positive_retained_chars": 766,
+            "neighbor_only_retained_chars": 1229,
+            "unavailable_retained_chars": 0,
+            "uncertain_retained_chars": 597,
+            "miss_details": []
+          },
+          "metrics": {
+            "required_span_recall": 1.0,
+            "required_spans": 4,
+            "misses": [],
+            "selected_chars": 2592,
+            "required_chars": 674,
+            "required_chars_retained": 674,
+            "irrelevant_chars": 3075,
+            "irrelevant_retained_chars": 1826,
+            "nonrequired_retained_chars": 1918,
+            "positive_retained_chars": 766,
+            "neighbor_only_retained_chars": 1229,
+            "unavailable_retained_chars": 0,
+            "uncertain_retained_chars": 597,
+            "miss_details": []
+          },
+          "errors": [],
+          "receipts": [
+            {
+              "request": 2,
+              "questions": 54,
+              "reserved_tokens": 55849,
+              "status": "ok",
+              "requested_model": "jev-latest",
+              "model": "jev-1.14.0",
+              "usage": {
+                "input_tokens": 10290,
+                "output_tokens": 1228
+              },
+              "latency_s": 0.5631
+            },
+            {
+              "request": 3,
+              "questions": 2,
+              "reserved_tokens": 12483,
+              "status": "ok",
+              "requested_model": "jev-latest",
+              "model": "jev-1.14.0",
+              "usage": {
+                "input_tokens": 2320,
+                "output_tokens": 50
+              },
+              "latency_s": 0.382
+            }
+          ],
+          "second_pass": {
+            "status": "scored",
+            "model": "jev-1.14.0",
+            "usage": {
+              "input_tokens": 2320,
+              "output_tokens": 50
+            },
+            "warning": "Dependency judgments only; not independent proof of packet sufficiency."
+          }
+        },
+        "window-direct": {
+          "first_metrics": {
+            "required_span_recall": 1.0,
+            "required_spans": 4,
+            "misses": [],
+            "selected_chars": 3841,
+            "required_chars": 674,
+            "required_chars_retained": 674,
+            "irrelevant_chars": 3075,
+            "irrelevant_retained_chars": 3075,
+            "nonrequired_retained_chars": 3167,
+            "positive_retained_chars": 1741,
+            "neighbor_only_retained_chars": 0,
+            "unavailable_retained_chars": 0,
+            "uncertain_retained_chars": 2100,
+            "miss_details": []
+          },
+          "metrics": {
+            "required_span_recall": 1.0,
+            "required_spans": 4,
+            "misses": [],
+            "selected_chars": 3841,
+            "required_chars": 674,
+            "required_chars_retained": 674,
+            "irrelevant_chars": 3075,
+            "irrelevant_retained_chars": 3075,
+            "nonrequired_retained_chars": 3167,
+            "positive_retained_chars": 1741,
+            "neighbor_only_retained_chars": 0,
+            "unavailable_retained_chars": 0,
+            "uncertain_retained_chars": 2100,
+            "miss_details": []
+          },
+          "errors": [],
+          "receipts": [
+            {
+              "request": 4,
+              "questions": 12,
+              "reserved_tokens": 19645,
+              "status": "ok",
+              "requested_model": "jev-latest",
+              "model": "jev-1.14.0",
+              "usage": {
+                "input_tokens": 3445,
+                "output_tokens": 268
+              },
+              "latency_s": 0.3583
+            }
+          ],
+          "second_pass": {
+            "status": "disabled"
+          }
+        },
+        "window-enriched": {
+          "first_metrics": {
+            "required_span_recall": 1.0,
+            "required_spans": 4,
+            "misses": [],
+            "selected_chars": 3841,
+            "required_chars": 674,
+            "required_chars_retained": 674,
+            "irrelevant_chars": 3075,
+            "irrelevant_retained_chars": 3075,
+            "nonrequired_retained_chars": 3167,
+            "positive_retained_chars": 2441,
+            "neighbor_only_retained_chars": 0,
+            "unavailable_retained_chars": 0,
+            "uncertain_retained_chars": 1400,
+            "miss_details": []
+          },
+          "metrics": {
+            "required_span_recall": 1.0,
+            "required_spans": 4,
+            "misses": [],
+            "selected_chars": 3841,
+            "required_chars": 674,
+            "required_chars_retained": 674,
+            "irrelevant_chars": 3075,
+            "irrelevant_retained_chars": 3075,
+            "nonrequired_retained_chars": 3167,
+            "positive_retained_chars": 2441,
+            "neighbor_only_retained_chars": 0,
+            "unavailable_retained_chars": 0,
+            "uncertain_retained_chars": 1400,
+            "miss_details": []
+          },
+          "errors": [],
+          "receipts": [
+            {
+              "request": 5,
+              "questions": 36,
+              "reserved_tokens": 40097,
+              "status": "ok",
+              "requested_model": "jev-latest",
+              "model": "jev-1.14.0",
+              "usage": {
+                "input_tokens": 7247,
+                "output_tokens": 820
+              },
+              "latency_s": 0.4617
+            }
+          ],
+          "second_pass": {
+            "status": "not_needed"
+          }
+        }
+      }
+    },
+    {
+      "name": "public-contributor",
+      "source_chars": 5793,
+      "variants": {
+        "heading-direct": {
+          "first_metrics": {
+            "required_span_recall": 1.0,
+            "required_spans": 6,
+            "misses": [],
+            "selected_chars": 5159,
+            "required_chars": 937,
+            "required_chars_retained": 937,
+            "irrelevant_chars": 2495,
+            "irrelevant_retained_chars": 2495,
+            "nonrequired_retained_chars": 4222,
+            "positive_retained_chars": 1313,
+            "neighbor_only_retained_chars": 0,
+            "unavailable_retained_chars": 0,
+            "uncertain_retained_chars": 3846,
+            "miss_details": []
+          },
+          "metrics": {
+            "required_span_recall": 1.0,
+            "required_spans": 6,
+            "misses": [],
+            "selected_chars": 5159,
+            "required_chars": 937,
+            "required_chars_retained": 937,
+            "irrelevant_chars": 2495,
+            "irrelevant_retained_chars": 2495,
+            "nonrequired_retained_chars": 4222,
+            "positive_retained_chars": 1313,
+            "neighbor_only_retained_chars": 0,
+            "unavailable_retained_chars": 0,
+            "uncertain_retained_chars": 3846,
+            "miss_details": []
+          },
+          "errors": [],
+          "receipts": [
+            {
+              "request": 1,
+              "questions": 24,
+              "reserved_tokens": 38289,
+              "status": "ok",
+              "requested_model": "jev-latest",
+              "model": "jev-1.14.0",
+              "usage": {
+                "input_tokens": 8405,
+                "output_tokens": 532
+              },
+              "latency_s": 0.4231
+            },
+            {
+              "request": 2,
+              "questions": 2,
+              "reserved_tokens": 16638,
+              "status": "ok",
+              "requested_model": "jev-latest",
+              "model": "jev-1.14.0",
+              "usage": {
+                "input_tokens": 3804,
+                "output_tokens": 48
+              },
+              "latency_s": 0.3477
+            }
+          ],
+          "second_pass": {
+            "status": "disabled"
+          }
+        },
+        "heading-enriched": {
+          "first_metrics": {
+            "required_span_recall": 1.0,
+            "required_spans": 6,
+            "misses": [],
+            "selected_chars": 5384,
+            "required_chars": 937,
+            "required_chars_retained": 937,
+            "irrelevant_chars": 2495,
+            "irrelevant_retained_chars": 2495,
+            "nonrequired_retained_chars": 4447,
+            "positive_retained_chars": 1313,
+            "neighbor_only_retained_chars": 0,
+            "unavailable_retained_chars": 0,
+            "uncertain_retained_chars": 4071,
+            "miss_details": []
+          },
+          "metrics": {
+            "required_span_recall": 1.0,
+            "required_spans": 6,
+            "misses": [],
+            "selected_chars": 5384,
+            "required_chars": 937,
+            "required_chars_retained": 937,
+            "irrelevant_chars": 2495,
+            "irrelevant_retained_chars": 2495,
+            "nonrequired_retained_chars": 4447,
+            "positive_retained_chars": 1313,
+            "neighbor_only_retained_chars": 0,
+            "unavailable_retained_chars": 0,
+            "uncertain_retained_chars": 4071,
+            "miss_details": []
+          },
+          "errors": [],
+          "receipts": [
+            {
+              "request": 1,
+              "questions": 36,
+              "reserved_tokens": 50815,
+              "status": "ok",
+              "requested_model": "jev-latest",
+              "model": "jev-1.14.0",
+              "usage": {
+                "input_tokens": 10989,
+                "output_tokens": 820
+              },
+              "latency_s": 0.524
+            },
+            {
+              "request": 2,
+              "questions": 36,
+              "reserved_tokens": 50923,
+              "status": "ok",
+              "requested_model": "jev-latest",
+              "model": "jev-1.14.0",
+              "usage": {
+                "input_tokens": 11097,
+                "output_tokens": 820
+              },
+              "latency_s": 0.5174
+            },
+            {
+              "request": 3,
+              "questions": 6,
+              "reserved_tokens": 20712,
+              "status": "ok",
+              "requested_model": "jev-latest",
+              "model": "jev-1.14.0",
+              "usage": {
+                "input_tokens": 4671,
+                "output_tokens": 140
+              },
+              "latency_s": 0.4044
+            },
+            {
+              "request": 4,
+              "questions": 1,
+              "reserved_tokens": 16015,
+              "status": "ok",
+              "requested_model": "jev-latest",
+              "model": "jev-1.14.0",
+              "usage": {
+                "input_tokens": 3771,
+                "output_tokens": 27
+              },
+              "latency_s": 0.3403
+            }
+          ],
+          "second_pass": {
+            "status": "scored",
+            "model": "jev-1.14.0",
+            "usage": {
+              "input_tokens": 3771,
+              "output_tokens": 27
+            },
+            "warning": "Dependency judgments only; not independent proof of packet sufficiency."
+          }
+        },
+        "window-direct": {
+          "first_metrics": {
+            "required_span_recall": 1.0,
+            "required_spans": 6,
+            "misses": [],
+            "selected_chars": 5793,
+            "required_chars": 937,
+            "required_chars_retained": 937,
+            "irrelevant_chars": 2495,
+            "irrelevant_retained_chars": 2495,
+            "nonrequired_retained_chars": 4856,
+            "positive_retained_chars": 1400,
+            "neighbor_only_retained_chars": 0,
+            "unavailable_retained_chars": 0,
+            "uncertain_retained_chars": 4393,
+            "miss_details": []
+          },
+          "metrics": {
+            "required_span_recall": 1.0,
+            "required_spans": 6,
+            "misses": [],
+            "selected_chars": 5793,
+            "required_chars": 937,
+            "required_chars_retained": 937,
+            "irrelevant_chars": 2495,
+            "irrelevant_retained_chars": 2495,
+            "nonrequired_retained_chars": 4856,
+            "positive_retained_chars": 1400,
+            "neighbor_only_retained_chars": 0,
+            "unavailable_retained_chars": 0,
+            "uncertain_retained_chars": 4393,
+            "miss_details": []
+          },
+          "errors": [],
+          "receipts": [
+            {
+              "request": 3,
+              "questions": 18,
+              "reserved_tokens": 31294,
+              "status": "ok",
+              "requested_model": "jev-latest",
+              "model": "jev-1.14.0",
+              "usage": {
+                "input_tokens": 6751,
+                "output_tokens": 400
+              },
+              "latency_s": 0.4167
+            }
+          ],
+          "second_pass": {
+            "status": "disabled"
+          }
+        },
+        "window-enriched": {
+          "first_metrics": {
+            "required_span_recall": 1.0,
+            "required_spans": 6,
+            "misses": [],
+            "selected_chars": 5793,
+            "required_chars": 937,
+            "required_chars_retained": 937,
+            "irrelevant_chars": 2495,
+            "irrelevant_retained_chars": 2495,
+            "nonrequired_retained_chars": 4856,
+            "positive_retained_chars": 2100,
+            "neighbor_only_retained_chars": 0,
+            "unavailable_retained_chars": 0,
+            "uncertain_retained_chars": 3693,
+            "miss_details": []
+          },
+          "metrics": {
+            "required_span_recall": 1.0,
+            "required_spans": 6,
+            "misses": [],
+            "selected_chars": 5793,
+            "required_chars": 937,
+            "required_chars_retained": 937,
+            "irrelevant_chars": 2495,
+            "irrelevant_retained_chars": 2495,
+            "nonrequired_retained_chars": 4856,
+            "positive_retained_chars": 2100,
+            "neighbor_only_retained_chars": 0,
+            "unavailable_retained_chars": 0,
+            "uncertain_retained_chars": 3693,
+            "miss_details": []
+          },
+          "errors": [],
+          "receipts": [
+            {
+              "request": 4,
+              "questions": 54,
+              "reserved_tokens": 67892,
+              "status": "ok",
+              "requested_model": "jev-latest",
+              "model": "jev-1.14.0",
+              "usage": {
+                "input_tokens": 14486,
+                "output_tokens": 1228
+              },
+              "latency_s": 0.5559
+            }
+          ],
+          "second_pass": {
+            "status": "not_needed"
+          }
+        }
+      }
+    }
+  ],
+  "recovery": [
+    {
+      "case": "atlas-retention",
+      "variant": "heading-direct",
+      "status": "disabled",
+      "added_chars": 0,
+      "first_misses": [],
+      "final_misses": []
+    },
+    {
+      "case": "atlas-retention",
+      "variant": "heading-enriched",
+      "status": "scored",
+      "added_chars": 0,
+      "first_misses": [],
+      "final_misses": []
+    },
+    {
+      "case": "atlas-retention",
+      "variant": "window-direct",
+      "status": "disabled",
+      "added_chars": 0,
+      "first_misses": [],
+      "final_misses": []
+    },
+    {
+      "case": "atlas-retention",
+      "variant": "window-enriched",
+      "status": "scored",
+      "added_chars": 0,
+      "first_misses": [],
+      "final_misses": []
+    },
+    {
+      "case": "cinder-rollout",
+      "variant": "heading-direct",
+      "status": "disabled",
+      "added_chars": 0,
+      "first_misses": [],
+      "final_misses": []
+    },
+    {
+      "case": "cinder-rollout",
+      "variant": "heading-enriched",
+      "status": "scored",
+      "added_chars": 0,
+      "first_misses": [],
+      "final_misses": []
+    },
+    {
+      "case": "cinder-rollout",
+      "variant": "window-direct",
+      "status": "disabled",
+      "added_chars": 0,
+      "first_misses": [],
+      "final_misses": []
+    },
+    {
+      "case": "cinder-rollout",
+      "variant": "window-enriched",
+      "status": "scored",
+      "added_chars": 0,
+      "first_misses": [],
+      "final_misses": []
+    },
+    {
+      "case": "elm-replay",
+      "variant": "heading-direct",
+      "status": "disabled",
+      "added_chars": 0,
+      "first_misses": [],
+      "final_misses": []
+    },
+    {
+      "case": "elm-replay",
+      "variant": "heading-enriched",
+      "status": "scored",
+      "added_chars": 0,
+      "first_misses": [],
+      "final_misses": []
+    },
+    {
+      "case": "elm-replay",
+      "variant": "window-direct",
+      "status": "disabled",
+      "added_chars": 0,
+      "first_misses": [],
+      "final_misses": []
+    },
+    {
+      "case": "elm-replay",
+      "variant": "window-enriched",
+      "status": "not_needed",
+      "added_chars": 0,
+      "first_misses": [],
+      "final_misses": []
+    },
+    {
+      "case": "public-contributor",
+      "variant": "heading-direct",
+      "status": "disabled",
+      "added_chars": 0,
+      "first_misses": [],
+      "final_misses": []
+    },
+    {
+      "case": "public-contributor",
+      "variant": "heading-enriched",
+      "status": "scored",
+      "added_chars": 0,
+      "first_misses": [],
+      "final_misses": []
+    },
+    {
+      "case": "public-contributor",
+      "variant": "window-direct",
+      "status": "disabled",
+      "added_chars": 0,
+      "first_misses": [],
+      "final_misses": []
+    },
+    {
+      "case": "public-contributor",
+      "variant": "window-enriched",
+      "status": "not_needed",
+      "added_chars": 0,
+      "first_misses": [],
+      "final_misses": []
+    }
+  ],
+  "usage": {
+    "requests": 31,
+    "input_tokens": 164560,
+    "output_tokens": 12960,
+    "latency_s": 13.5491,
+    "latency_min_s": 0.3238,
+    "latency_max_s": 0.6188,
+    "reserved_tokens_across_invocations": 855101,
+    "models": [
+      "jev-1.14.0"
+    ],
+    "price_or_cost": null,
+    "cost_note": "API reports token usage, not monetary charges. No verified tariff used."
+  },
+  "receipts": [
+    {
+      "request": 1,
+      "questions": 18,
+      "reserved_tokens": 24767,
+      "status": "ok",
+      "requested_model": "jev-latest",
+      "model": "jev-1.14.0",
+      "usage": {
+        "input_tokens": 4612,
+        "output_tokens": 400
+      },
+      "latency_s": 0.4396,
+      "session_request": 1
+    },
+    {
+      "request": 2,
+      "questions": 54,
+      "reserved_tokens": 54749,
+      "status": "ok",
+      "requested_model": "jev-latest",
+      "model": "jev-1.14.0",
+      "usage": {
+        "input_tokens": 10339,
+        "output_tokens": 1228
+      },
+      "latency_s": 0.5165,
+      "session_request": 2
+    },
+    {
+      "request": 3,
+      "questions": 1,
+      "reserved_tokens": 11430,
+      "status": "ok",
+      "requested_model": "jev-latest",
+      "model": "jev-1.14.0",
+      "usage": {
+        "input_tokens": 2121,
+        "output_tokens": 27
+      },
+      "latency_s": 0.3818,
+      "session_request": 3
+    },
+    {
+      "request": 4,
+      "questions": 12,
+      "reserved_tokens": 19328,
+      "status": "ok",
+      "requested_model": "jev-latest",
+      "model": "jev-1.14.0",
+      "usage": {
+        "input_tokens": 3448,
+        "output_tokens": 268
+      },
+      "latency_s": 0.4356,
+      "session_request": 4
+    },
+    {
+      "request": 5,
+      "questions": 36,
+      "reserved_tokens": 39324,
+      "status": "ok",
+      "requested_model": "jev-latest",
+      "model": "jev-1.14.0",
+      "usage": {
+        "input_tokens": 7274,
+        "output_tokens": 820
+      },
+      "latency_s": 0.4905,
+      "session_request": 5
+    },
+    {
+      "request": 6,
+      "questions": 1,
+      "reserved_tokens": 10726,
+      "status": "ok",
+      "requested_model": "jev-latest",
+      "model": "jev-1.14.0",
+      "usage": {
+        "input_tokens": 1834,
+        "output_tokens": 27
+      },
+      "latency_s": 0.3238,
+      "session_request": 6
+    },
+    {
+      "request": 1,
+      "questions": 18,
+      "reserved_tokens": 25061,
+      "status": "ok",
+      "requested_model": "jev-latest",
+      "model": "jev-1.14.0",
+      "usage": {
+        "input_tokens": 4621,
+        "output_tokens": 400
+      },
+      "latency_s": 0.4734,
+      "session_request": 7
+    },
+    {
+      "request": 2,
+      "questions": 54,
+      "reserved_tokens": 55375,
+      "status": "ok",
+      "requested_model": "jev-latest",
+      "model": "jev-1.14.0",
+      "usage": {
+        "input_tokens": 10320,
+        "output_tokens": 1228
+      },
+      "latency_s": 0.4922,
+      "session_request": 8
+    },
+    {
+      "request": 3,
+      "questions": 4,
+      "reserved_tokens": 14351,
+      "status": "ok",
+      "requested_model": "jev-latest",
+      "model": "jev-1.14.0",
+      "usage": {
+        "input_tokens": 2686,
+        "output_tokens": 96
+      },
+      "latency_s": 0.3708,
+      "session_request": 9
+    },
+    {
+      "request": 4,
+      "questions": 12,
+      "reserved_tokens": 19563,
+      "status": "ok",
+      "requested_model": "jev-latest",
+      "model": "jev-1.14.0",
+      "usage": {
+        "input_tokens": 3454,
+        "output_tokens": 268
+      },
+      "latency_s": 0.4389,
+      "session_request": 10
+    },
+    {
+      "request": 5,
+      "questions": 36,
+      "reserved_tokens": 39775,
+      "status": "ok",
+      "requested_model": "jev-latest",
+      "model": "jev-1.14.0",
+      "usage": {
+        "input_tokens": 7256,
+        "output_tokens": 820
+      },
+      "latency_s": 0.4452,
+      "session_request": 11
+    },
+    {
+      "request": 6,
+      "questions": 3,
+      "reserved_tokens": 12673,
+      "status": "ok",
+      "requested_model": "jev-latest",
+      "model": "jev-1.14.0",
+      "usage": {
+        "input_tokens": 2184,
+        "output_tokens": 73
+      },
+      "latency_s": 0.3258,
+      "session_request": 12
+    },
+    {
+      "request": 1,
+      "questions": 18,
+      "reserved_tokens": 25183,
+      "status": "ok",
+      "requested_model": "jev-latest",
+      "model": "jev-1.14.0",
+      "usage": {
+        "input_tokens": 4599,
+        "output_tokens": 400
+      },
+      "latency_s": 0.382,
+      "session_request": 13
+    },
+    {
+      "request": 2,
+      "questions": 54,
+      "reserved_tokens": 55849,
+      "status": "ok",
+      "requested_model": "jev-latest",
+      "model": "jev-1.14.0",
+      "usage": {
+        "input_tokens": 10290,
+        "output_tokens": 1228
+      },
+      "latency_s": 0.5631,
+      "session_request": 14
+    },
+    {
+      "request": 3,
+      "questions": 2,
+      "reserved_tokens": 12483,
+      "status": "ok",
+      "requested_model": "jev-latest",
+      "model": "jev-1.14.0",
+      "usage": {
+        "input_tokens": 2320,
+        "output_tokens": 50
+      },
+      "latency_s": 0.382,
+      "session_request": 15
+    },
+    {
+      "request": 4,
+      "questions": 12,
+      "reserved_tokens": 19645,
+      "status": "ok",
+      "requested_model": "jev-latest",
+      "model": "jev-1.14.0",
+      "usage": {
+        "input_tokens": 3445,
+        "output_tokens": 268
+      },
+      "latency_s": 0.3583,
+      "session_request": 16
+    },
+    {
+      "request": 5,
+      "questions": 36,
+      "reserved_tokens": 40097,
+      "status": "ok",
+      "requested_model": "jev-latest",
+      "model": "jev-1.14.0",
+      "usage": {
+        "input_tokens": 7247,
+        "output_tokens": 820
+      },
+      "latency_s": 0.4617,
+      "session_request": 17
+    },
+    {
+      "request": 1,
+      "questions": 24,
+      "reserved_tokens": 38289,
+      "status": "ok",
+      "requested_model": "jev-latest",
+      "model": "jev-1.14.0",
+      "usage": {
+        "input_tokens": 8405,
+        "output_tokens": 532
+      },
+      "latency_s": 0.4231,
+      "session_request": 18
+    },
+    {
+      "request": 2,
+      "questions": 2,
+      "reserved_tokens": 16638,
+      "status": "ok",
+      "requested_model": "jev-latest",
+      "model": "jev-1.14.0",
+      "usage": {
+        "input_tokens": 3804,
+        "output_tokens": 48
+      },
+      "latency_s": 0.3477,
+      "session_request": 19
+    },
+    {
+      "request": 3,
+      "questions": 18,
+      "reserved_tokens": 31294,
+      "status": "ok",
+      "requested_model": "jev-latest",
+      "model": "jev-1.14.0",
+      "usage": {
+        "input_tokens": 6751,
+        "output_tokens": 400
+      },
+      "latency_s": 0.4167,
+      "session_request": 20
+    },
+    {
+      "request": 4,
+      "questions": 54,
+      "reserved_tokens": 67892,
+      "status": "ok",
+      "requested_model": "jev-latest",
+      "model": "jev-1.14.0",
+      "usage": {
+        "input_tokens": 14486,
+        "output_tokens": 1228
+      },
+      "latency_s": 0.5559,
+      "session_request": 21
+    },
+    {
+      "request": 1,
+      "questions": 36,
+      "reserved_tokens": 50815,
+      "status": "ok",
+      "requested_model": "jev-latest",
+      "model": "jev-1.14.0",
+      "usage": {
+        "input_tokens": 10989,
+        "output_tokens": 820
+      },
+      "latency_s": 0.524,
+      "session_request": 22
+    },
+    {
+      "request": 2,
+      "questions": 36,
+      "reserved_tokens": 50923,
+      "status": "ok",
+      "requested_model": "jev-latest",
+      "model": "jev-1.14.0",
+      "usage": {
+        "input_tokens": 11097,
+        "output_tokens": 820
+      },
+      "latency_s": 0.5174,
+      "session_request": 23
+    },
+    {
+      "request": 3,
+      "questions": 6,
+      "reserved_tokens": 20712,
+      "status": "ok",
+      "requested_model": "jev-latest",
+      "model": "jev-1.14.0",
+      "usage": {
+        "input_tokens": 4671,
+        "output_tokens": 140
+      },
+      "latency_s": 0.4044,
+      "session_request": 24
+    },
+    {
+      "request": 4,
+      "questions": 1,
+      "reserved_tokens": 16015,
+      "status": "ok",
+      "requested_model": "jev-latest",
+      "model": "jev-1.14.0",
+      "usage": {
+        "input_tokens": 3771,
+        "output_tokens": 27
+      },
+      "latency_s": 0.3403,
+      "session_request": 25
+    },
+    {
+      "request": 5,
+      "questions": 4,
+      "reserved_tokens": 11936,
+      "status": "ok",
+      "requested_model": "jev-latest",
+      "model": "jev-1.14.0",
+      "usage": {
+        "input_tokens": 1707,
+        "output_tokens": 104
+      },
+      "latency_s": 0.3658,
+      "session_request": 26
+    },
+    {
+      "request": 6,
+      "questions": 3,
+      "reserved_tokens": 11177,
+      "status": "ok",
+      "requested_model": "jev-latest",
+      "model": "jev-1.14.0",
+      "usage": {
+        "input_tokens": 1537,
+        "output_tokens": 79
+      },
+      "latency_s": 0.3259,
+      "session_request": 27
+    },
+    {
+      "request": 7,
+      "questions": 3,
+      "reserved_tokens": 11213,
+      "status": "ok",
+      "requested_model": "jev-latest",
+      "model": "jev-1.14.0",
+      "usage": {
+        "input_tokens": 1555,
+        "output_tokens": 79
+      },
+      "latency_s": 0.369,
+      "session_request": 28
+    },
+    {
+      "request": 1,
+      "questions": 4,
+      "reserved_tokens": 16358,
+      "status": "ok",
+      "requested_model": "jev-latest",
+      "model": "jev-1.14.0",
+      "usage": {
+        "input_tokens": 2671,
+        "output_tokens": 104
+      },
+      "latency_s": 0.5548,
+      "session_request": 29
+    },
+    {
+      "request": 2,
+      "questions": 3,
+      "reserved_tokens": 15725,
+      "status": "ok",
+      "requested_model": "jev-latest",
+      "model": "jev-1.14.0",
+      "usage": {
+        "input_tokens": 2523,
+        "output_tokens": 79
+      },
+      "latency_s": 0.6188,
+      "session_request": 30
+    },
+    {
+      "request": 3,
+      "questions": 3,
+      "reserved_tokens": 15735,
+      "status": "ok",
+      "requested_model": "jev-latest",
+      "model": "jev-1.14.0",
+      "usage": {
+        "input_tokens": 2543,
+        "output_tokens": 79
+      },
+      "latency_s": 0.5041,
+      "session_request": 31
+    }
+  ],
+  "representative_pair_regions": [
+    {
+      "case": "atlas-retention",
+      "pair_scores": {
+        "status": "scored",
+        "answers": {
+          "r0002.r0001": {
+            "type": "noul",
+            "noul": 0.02
+          },
+          "r0002.r0003": {
+            "type": "noul",
+            "noul": 0.01
+          },
+          "r0005.r0004": {
+            "type": "noul",
+            "noul": 0.01
+          },
+          "r0005.r0006": {
+            "type": "noul",
+            "noul": 0.02
+          }
+        },
+        "model": "jev-1.14.0",
+        "usage": {
+          "input_tokens": 2671,
+          "output_tokens": 104
+        }
+      },
+      "regions": [
+        {
+          "id": "r0001",
+          "path": "atlas-retention.md",
+          "start": 177,
+          "end": 788,
+          "line_start": 4,
+          "line_end": 6,
+          "column_start": 1,
+          "column_end": 2,
+          "byte_start": 177,
+          "byte_end": 788,
+          "scores": {
+            "evidence": 0.97,
+            "direct": 0.02,
+            "prerequisite": 0.02,
+            "exception": 0.03,
+            "instruction": 0.02,
+            "neighbor": 0.03
+          },
+          "status": "scored",
+          "reasons": [],
+          "selected": false,
+          "text": "## Design assets\nThe communications team keeps vector icons, event photographs and slide templates in the brand archive. Screenshots should use the current blue theme and the standard rounded frame. Asset exports are named by campaign and language. Reviewers compare color contrast on the light and dark backgrounds. The monthly design meeting chooses illustrations for the public status page. None of these files configure the running service. Keep original artwork separate from compressed newsletter attachments. A design review is complete when the art director records approval in the editorial calendar.\n\n",
+          "neighbor_pair_scores": {
+            "r0002": 0.02
+          }
+        },
+        {
+          "id": "r0003",
+          "path": "atlas-retention.md",
+          "start": 959,
+          "end": 1556,
+          "line_start": 10,
+          "line_end": 12,
+          "column_start": 1,
+          "column_end": 2,
+          "byte_start": 959,
+          "byte_end": 1556,
+          "scores": {
+            "evidence": 0.93,
+            "direct": 0.24,
+            "prerequisite": 0.73,
+            "exception": 0.09,
+            "instruction": 0.55,
+            "neighbor": 0.55
+          },
+          "status": "ambiguous",
+          "reasons": [
+            "ambiguous"
+          ],
+          "selected": true,
+          "text": "## Office logistics\nThe facilities desk assigns visitor badges and maintains the seating map. Deliveries go to the east entrance before reception closes. The kitchen inventory lists mugs, coffee filters, cleaning cloths and spare water bottles. Employees book meeting rooms by local office time, with remote attendees receiving a video link. At the end of an event, return borrowed cables and adapters to the storage cabinet. Lost property remains with reception for one month. The bicycle room uses a separate access list, maintained by the building manager rather than the infrastructure team.\n\n",
+          "neighbor_pair_scores": {
+            "r0002": 0.01
+          }
+        },
+        {
+          "id": "r0004",
+          "path": "atlas-retention.md",
+          "start": 1556,
+          "end": 2174,
+          "line_start": 13,
+          "line_end": 15,
+          "column_start": 1,
+          "column_end": 2,
+          "byte_start": 1556,
+          "byte_end": 2174,
+          "scores": {
+            "evidence": 0.95,
+            "direct": 0.01,
+            "prerequisite": 0.02,
+            "exception": 0.02,
+            "instruction": 0.02,
+            "neighbor": 0.01
+          },
+          "status": "scored",
+          "reasons": [],
+          "selected": false,
+          "text": "## Training calendar\nThe enablement group runs introductory workshops, writing clinics and presentation rehearsals. Training materials are reviewed quarterly for broken links and outdated screenshots. A volunteer host opens each session, records attendance and gathers anonymous feedback. Participants can request captions or an alternate session time. Completion certificates refer only to attendance and do not grant operational permissions. The calendar includes a reading club and a peer mentoring hour. Facilitators publish slides after the session and remove duplicate attachments from the announcement thread.\n\n",
+          "neighbor_pair_scores": {
+            "r0005": 0.01
+          }
+        },
+        {
+          "id": "r0006",
+          "path": "atlas-retention.md",
+          "start": 2307,
+          "end": 2938,
+          "line_start": 19,
+          "line_end": 21,
+          "column_start": 1,
+          "column_end": 2,
+          "byte_start": 2307,
+          "byte_end": 2938,
+          "scores": {
+            "evidence": 0.96,
+            "direct": 0.03,
+            "prerequisite": 0.03,
+            "exception": 0.05,
+            "instruction": 0.02,
+            "neighbor": 0.04
+          },
+          "status": "scored",
+          "reasons": [],
+          "selected": false,
+          "text": "## Historical migration\nAn earlier stationery migration replaced the printed handbook with a searchable wiki. The project inventory covered binders, desk labels and the mailing list used to announce revisions. Historical dates in that inventory describe editorial work, not production deployments. The archived checklist remains useful to historians but is not an active operating procedure. Editors preserve original spellings in quoted correspondence and add errata in a separate index. Bibliographic citations use the original page numbers. Printed copies are stored in the library cabinet with the rest of the office archive.\n\n",
+          "neighbor_pair_scores": {
+            "r0005": 0.02
+          }
+        }
+      ]
+    },
+    {
+      "case": "cinder-rollout",
+      "pair_scores": {
+        "status": "scored",
+        "answers": {
+          "r0000.r0001": {
+            "type": "noul",
+            "noul": 0.98
+          },
+          "r0001.r0000": {
+            "type": "noul",
+            "noul": 0.89
+          },
+          "r0001.r0002": {
+            "type": "noul",
+            "noul": 0.01
+          }
+        },
+        "model": "jev-1.14.0",
+        "usage": {
+          "input_tokens": 2523,
+          "output_tokens": 79
+        }
+      },
+      "regions": [
+        {
+          "id": "r0000",
+          "path": "cinder-rollout.md",
+          "start": 0,
+          "end": 188,
+          "line_start": 1,
+          "line_end": 3,
+          "column_start": 1,
+          "column_end": 2,
+          "byte_start": 0,
+          "byte_end": 188,
+          "scores": {
+            "evidence": 0.99,
+            "direct": 0.96,
+            "prerequisite": 0.9,
+            "exception": 0.67,
+            "instruction": 0.99,
+            "neighbor": 0.86
+          },
+          "status": "ambiguous",
+          "reasons": [
+            "ambiguous",
+            "direct",
+            "prerequisite",
+            "instruction",
+            "verified_neighbor:r0001"
+          ],
+          "selected": true,
+          "text": "## Replacement action\nRun cinder rollout --lane amber --receipt READY only after the staging probe has passed. This command replaces workers in the selected lane, not the entire cluster.\n\n",
+          "neighbor_pair_scores": {
+            "r0001": 0.89
+          }
+        },
+        {
+          "id": "r0001",
+          "path": "cinder-rollout.md",
+          "start": 188,
+          "end": 400,
+          "line_start": 4,
+          "line_end": 6,
+          "column_start": 1,
+          "column_end": 2,
+          "byte_start": 188,
+          "byte_end": 400,
+          "scores": {
+            "evidence": 0.99,
+            "direct": 0.96,
+            "prerequisite": 0.94,
+            "exception": 0.93,
+            "instruction": 0.98,
+            "neighbor": 0.93
+          },
+          "status": "scored",
+          "reasons": [
+            "direct",
+            "prerequisite",
+            "exception",
+            "instruction",
+            "verified_neighbor:r0000"
+          ],
+          "selected": true,
+          "text": "## Continuation\nThe permission in the preceding section applies only when the on-call operator has confirmed that the queue is empty. If it is nonempty, leave the old workers running and request a drain window.\n\n",
+          "neighbor_pair_scores": {
+            "r0000": 0.98
+          }
+        },
+        {
+          "id": "r0002",
+          "path": "cinder-rollout.md",
+          "start": 400,
+          "end": 1011,
+          "line_start": 7,
+          "line_end": 9,
+          "column_start": 1,
+          "column_end": 2,
+          "byte_start": 400,
+          "byte_end": 1011,
+          "scores": {
+            "evidence": 0.98,
+            "direct": 0.02,
+            "prerequisite": 0.03,
+            "exception": 0.03,
+            "instruction": 0.02,
+            "neighbor": 0.02
+          },
+          "status": "scored",
+          "reasons": [],
+          "selected": false,
+          "text": "## Design assets\nThe communications team keeps vector icons, event photographs and slide templates in the brand archive. Screenshots should use the current blue theme and the standard rounded frame. Asset exports are named by campaign and language. Reviewers compare color contrast on the light and dark backgrounds. The monthly design meeting chooses illustrations for the public status page. None of these files configure the running service. Keep original artwork separate from compressed newsletter attachments. A design review is complete when the art director records approval in the editorial calendar.\n\n",
+          "neighbor_pair_scores": {
+            "r0001": 0.01
+          }
+        }
+      ]
+    },
+    {
+      "case": "elm-replay",
+      "pair_scores": {
+        "status": "scored",
+        "answers": {
+          "r0002.r0001": {
+            "type": "noul",
+            "noul": 0.06
+          },
+          "r0002.r0003": {
+            "type": "noul",
+            "noul": 0.02
+          },
+          "r0008.r0007": {
+            "type": "noul",
+            "noul": 0.02
+          }
+        },
+        "model": "jev-1.14.0",
+        "usage": {
+          "input_tokens": 2543,
+          "output_tokens": 79
+        }
+      },
+      "regions": [
+        {
+          "id": "r0001",
+          "path": "elm-replay.md",
+          "start": 185,
+          "end": 796,
+          "line_start": 4,
+          "line_end": 6,
+          "column_start": 1,
+          "column_end": 2,
+          "byte_start": 185,
+          "byte_end": 796,
+          "scores": {
+            "evidence": 0.95,
+            "direct": 0.03,
+            "prerequisite": 0.03,
+            "exception": 0.05,
+            "instruction": 0.02,
+            "neighbor": 0.03
+          },
+          "status": "scored",
+          "reasons": [],
+          "selected": false,
+          "text": "## Design assets\nThe communications team keeps vector icons, event photographs and slide templates in the brand archive. Screenshots should use the current blue theme and the standard rounded frame. Asset exports are named by campaign and language. Reviewers compare color contrast on the light and dark backgrounds. The monthly design meeting chooses illustrations for the public status page. None of these files configure the running service. Keep original artwork separate from compressed newsletter attachments. A design review is complete when the art director records approval in the editorial calendar.\n\n",
+          "neighbor_pair_scores": {
+            "r0002": 0.06
+          }
+        },
+        {
+          "id": "r0003",
+          "path": "elm-replay.md",
+          "start": 977,
+          "end": 1574,
+          "line_start": 10,
+          "line_end": 12,
+          "column_start": 1,
+          "column_end": 2,
+          "byte_start": 977,
+          "byte_end": 1574,
+          "scores": {
+            "evidence": 0.91,
+            "direct": 0.36,
+            "prerequisite": 0.6,
+            "exception": 0.58,
+            "instruction": 0.34,
+            "neighbor": 0.47
+          },
+          "status": "ambiguous",
+          "reasons": [
+            "ambiguous"
+          ],
+          "selected": true,
+          "text": "## Office logistics\nThe facilities desk assigns visitor badges and maintains the seating map. Deliveries go to the east entrance before reception closes. The kitchen inventory lists mugs, coffee filters, cleaning cloths and spare water bottles. Employees book meeting rooms by local office time, with remote attendees receiving a video link. At the end of an event, return borrowed cables and adapters to the storage cabinet. Lost property remains with reception for one month. The bicycle room uses a separate access list, maintained by the building manager rather than the infrastructure team.\n\n",
+          "neighbor_pair_scores": {
+            "r0002": 0.02
+          }
+        },
+        {
+          "id": "r0007",
+          "path": "elm-replay.md",
+          "start": 3008,
+          "end": 3626,
+          "line_start": 22,
+          "line_end": 24,
+          "column_start": 1,
+          "column_end": 2,
+          "byte_start": 3008,
+          "byte_end": 3626,
+          "scores": {
+            "evidence": 0.93,
+            "direct": 0.02,
+            "prerequisite": 0.03,
+            "exception": 0.04,
+            "instruction": 0.02,
+            "neighbor": 0.03
+          },
+          "status": "scored",
+          "reasons": [],
+          "selected": false,
+          "text": "## Community showcase\nThe community program collects demonstration videos, conference abstracts and translated announcements. Submissions are reviewed for readable captions and clear licensing. The public gallery groups entries by language rather than technical maturity. A showcase badge indicates participation, not certification of a deployment or permission to access service data. Moderators remove duplicate submissions and ask authors to credit collaborators. The monthly digest links to selected entries and upcoming meetups. Survey results guide the next event schedule; they do not change operating policy.\n\n",
+          "neighbor_pair_scores": {
+            "r0008": 0.02
+          }
+        }
+      ]
+    }
+  ],
+  "public_replacement": "heading-enriched-small-batches, same source/oracle/size/rubric; 6 regions per request instead of 12; original unavailable artifact preserved.",
+  "pair_initial_negative": "Three offset-only pair calls produced ambiguous .39-.71, no deletion. Preserved in heading-enriched-pairs. Explicit labeled region text then separated real dependence from irrelevant proximity."
+}

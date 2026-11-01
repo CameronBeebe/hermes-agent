@@ -1,0 +1,75 @@
+{
+  "name": "public-contributor",
+  "path": "skills/autonomous-ai-agents/hermes-agent/references/contributor-guide.md",
+  "task": "On Linux or macOS, how do I prepare a fresh developer test environment, select its interpreter, and run tests safely? What must I do after editing pyproject.toml, and may I use raw pip or uv?",
+  "intent": "Find the documented PM build, fresh-environment caveat, test runner and isolation, interpreter selection, and dependency-edit workflow. Do not need tool-authoring or runtime architecture.",
+  "text": "# Contributor Quick Reference\n\nFor occasional contributors and PR authors. Full developer docs: https://hermes-agent.nousresearch.com/docs/developer-guide/\n\n### Project Layout\n\n```\nhermes-agent/\n\u251c\u2500\u2500 run_agent.py          # AIAgent \u2014 core conversation loop\n\u251c\u2500\u2500 model_tools.py        # Tool discovery and dispatch\n\u251c\u2500\u2500 toolsets.py           # Toolset definitions\n\u251c\u2500\u2500 cli.py                # Interactive CLI (HermesCLI)\n\u251c\u2500\u2500 hermes_state.py       # SQLite session store\n\u251c\u2500\u2500 agent/                # Prompt builder, context compression, memory, model routing, credential pooling, skill dispatch\n\u251c\u2500\u2500 hermes_cli/           # CLI subcommands, config, setup, commands\n\u2502   \u251c\u2500\u2500 commands.py       # Slash command registry (CommandDef)\n\u2502   \u251c\u2500\u2500 config.py         # DEFAULT_CONFIG, env var definitions\n\u2502   \u2514\u2500\u2500 main.py           # CLI entry point and argparse\n\u251c\u2500\u2500 tools/                # One file per tool\n\u2502   \u2514\u2500\u2500 registry.py       # Central tool registry\n\u251c\u2500\u2500 gateway/              # Messaging gateway\n\u2502   \u2514\u2500\u2500 platforms/        # Platform adapters (telegram, discord, etc.)\n\u251c\u2500\u2500 cron/                 # Job scheduler\n\u251c\u2500\u2500 tests/                # Extensive pytest suite (run via scripts/run_tests.sh)\n\u2514\u2500\u2500 website/              # Docusaurus docs site\n```\n\nConfig: `~/.hermes/config.yaml` (settings), `~/.hermes/.env` (API keys) \u2014 both under `$HERMES_HOME` when it is set.\n\n### Adding a Tool\n\nTwo files. Auto-discovery imports any `tools/*.py` with a top-level\n`registry.register()` call, but a tool is only *exposed* to an agent once\nits name appears in a toolset.\n\n**1. Create `tools/your_tool.py`:**\n```python\nimport json, os\nfrom tools.registry import registry\n\ndef check_requirements() -> bool:\n    return bool(os.getenv(\"EXAMPLE_API_KEY\"))\n\ndef example_tool(param: str, task_id: str = None) -> str:\n    return json.dumps({\"success\": True, \"data\": \"...\"})\n\nregistry.register(\n    name=\"example_tool\",\n    toolset=\"example\",\n    schema={\"name\": \"example_tool\", \"description\": \"...\", \"parameters\": {...}},\n    handler=lambda args, **kw: example_tool(\n        param=args.get(\"param\", \"\"), task_id=kw.get(\"task_id\")),\n    check_fn=check_requirements,\n    requires_env=[\"EXAMPLE_API_KEY\"],\n)\n```\n\n**2. Wire it into a toolset in `toolsets.py`** \u2014 add the name to\n`_HERMES_CORE_TOOLS` (every platform) or to a specific toolset.\n\nAll handlers must return JSON strings. Use `get_hermes_home()` for paths,\nnever hardcode `~/.hermes`. For custom/local-only tools, write a plugin in\n`~/.hermes/plugins/` instead of editing core \u2014 see the developer docs.\n\n### Adding a Slash Command\n\n1. Add `CommandDef` to `COMMAND_REGISTRY` in `hermes_cli/commands.py`\n2. Add handler in `cli.py` \u2192 `process_command()`\n3. (Optional) Add gateway handler in `gateway/run.py`\n\nAll consumers (help text, autocomplete, Telegram menu, Slack mapping) derive from the central registry automatically.\n\n### Agent Loop (High Level)\n\n```\nrun_conversation():\n  1. Build system prompt\n  2. Loop while iterations < max:\n     a. Call LLM (OpenAI-format messages + tool schemas)\n     b. If tool_calls \u2192 dispatch each via handle_function_call() \u2192 append results \u2192 continue\n     c. If text response \u2192 return\n  3. Context compression triggers automatically near token limit\n```\n\n### Testing\n\nUse `scripts/run_tests.sh` for CI parity. It clears credentials, sets\n`TZ=UTC`, and runs each test file in a separate subprocess through\n`scripts/run_tests_parallel.py` on every platform. It does not use xdist.\n\n```bash\nscripts/run_tests.sh                          # full suite\nscripts/run_tests.sh tests/tools/             # one directory\nscripts/run_tests.sh tests/tools/test_x.py    # one file\nscripts/run_tests.sh -v --tb=long             # pass-through pytest flags\n```\n\n- Tests auto-redirect `HERMES_HOME` to temp dirs \u2014 never touch real `~/.hermes/`.\n- Prepare Python through the PM developer workflow before building a test environment.\n- Run `python -m pm.build_env --source . --out .venv --group dev --group test`.\n  The output must not exist. Stop its processes and intentionally remove only\n  that disposable environment before regeneration.\n- The runner probes repository `.venv`, `venv`, and the standard source-install\n  venv before falling back to `HERMES_PYTHON`. Each candidate must contain pytest.\n- **Windows:** run the same wrapper through Git Bash. See `references/windows-quirks.md`.\n- After editing `pyproject.toml`, run `hermes pm lock`, re-source `./activate`, and\n  commit `pyproject.toml` with `uv.lock`.\n  Do not mutate Hermes environments with raw pip or uv commands.\n\nHost-specific tests run on the real host. Use one `@pytest.mark.platforms(...)`\nmarker per test, such as `@pytest.mark.platforms(\"windows\", arch=\"arm64\")`.\nDo not fake the host by patching `sys.platform` or platform probes.\n\n### System prompt's execution-environment block\n\nFactual host/backend guidance (OS, `$HOME`, cwd, terminal backend, shell)\nis emitted by `agent/prompt_builder.py::build_environment_hints()`. The key\ninvariant for prompt authors: with a **remote** terminal backend\n(`docker, modal, daytona, ssh, managed_modal`, plus plugin backends declaring `is_remote`), host info is\nsuppressed and *every* file tool runs inside the backend container \u2014 the\nprompt must never describe the host the agent can't touch.\n\n### Commit Conventions\n\n```\ntype: concise subject line\n\nOptional body.\n```\n\nTypes: `fix:`, `feat:`, `refactor:`, `docs:`, `chore:`\n\n### Key Rules\n\n- **Never break prompt caching** \u2014 don't change context, tools, or system prompt mid-conversation\n- **Message role alternation** \u2014 never two assistant or two user messages in a row\n- Use `get_hermes_home()` from `hermes_constants` for all paths (profile-safe)\n- Config values go in `config.yaml`, secrets go in `.env`\n- New tools need a `check_fn` so they only appear when requirements are met\n",
+  "source_url": "https://raw.githubusercontent.com/CameronBeebe/hermes-agent/e5f2b15300a3d04978e4c07cc64adc7bcf8e7b1c/skills/autonomous-ai-agents/hermes-agent/references/contributor-guide.md",
+  "sha256": "c92ea1a35fff35a665bfd19618198960d3afac10dab793f9372e16fb45895059",
+  "required_spans": [
+    {
+      "name": "runner",
+      "start": 3225,
+      "end": 3435,
+      "quote": "Use `scripts/run_tests.sh` for CI parity. It clears credentials, sets\n`TZ=UTC`, and runs each test file in a separate subprocess through\n`scripts/run_tests_parallel.py` on every platform. It does not use xdist."
+    },
+    {
+      "name": "isolation",
+      "start": 3702,
+      "end": 3783,
+      "quote": "- Tests auto-redirect `HERMES_HOME` to temp dirs \u2014 never touch real `~/.hermes/`."
+    },
+    {
+      "name": "pm-first",
+      "start": 3784,
+      "end": 3870,
+      "quote": "- Prepare Python through the PM developer workflow before building a test environment."
+    },
+    {
+      "name": "build-fresh",
+      "start": 3871,
+      "end": 4079,
+      "quote": "- Run `python -m pm.build_env --source . --out .venv --group dev --group test`.\n  The output must not exist. Stop its processes and intentionally remove only\n  that disposable environment before regeneration."
+    },
+    {
+      "name": "interpreter-selection",
+      "start": 4080,
+      "end": 4242,
+      "quote": "- The runner probes repository `.venv`, `venv`, and the standard source-install\n  venv before falling back to `HERMES_PYTHON`. Each candidate must contain pytest."
+    },
+    {
+      "name": "lock-no-raw-pip",
+      "start": 4333,
+      "end": 4523,
+      "quote": "- After editing `pyproject.toml`, run `hermes pm lock`, re-source `./activate`, and\n  commit `pyproject.toml` with `uv.lock`.\n  Do not mutate Hermes environments with raw pip or uv commands."
+    }
+  ],
+  "irrelevant_spans": [
+    {
+      "name": "### Adding a Tool",
+      "start": 1351,
+      "end": 2525
+    },
+    {
+      "name": "### Adding a Slash Command",
+      "start": 2525,
+      "end": 2846
+    },
+    {
+      "name": "### Agent Loop",
+      "start": 2846,
+      "end": 3212
+    },
+    {
+      "name": "### System prompt",
+      "start": 4750,
+      "end": 5252
+    },
+    {
+      "name": "### Commit Conventions",
+      "start": 5252,
+      "end": 5384
+    }
+  ],
+  "oracle_note": "Exact quotes manually selected before classification from the PUBLIC pinned download, not the private installed skill. Other nonrequired prose is unlabelled, not automatically irrelevant."
+}
