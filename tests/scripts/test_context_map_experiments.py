@@ -31,6 +31,40 @@ def test_session_ledger_accounts_across_clients_without_resetting_safe_run_caps(
     with pytest.raises(ValueError, match="session_token_budget"):
         e.SessionClient("fake", ledger, transport=httpx.MockTransport(handler)).ask({}, qs)
 
+@pytest.mark.platforms("posix")
+@pytest.mark.parametrize("link_kind", ["symlink", "hardlink"])
+def test_session_ledger_ignores_preexisting_pending_links(tmp_path, link_kind):
+    from scripts import context_map_experiments as e
+
+    tmp_path = tmp_path / "ledger-dir"
+    tmp_path.mkdir()
+    ledger = tmp_path / "ledger.json"
+    sentinel = tmp_path / "unrelated.txt"
+    sentinel.write_bytes(b"do not overwrite")
+    sentinel.chmod(0o640)
+    pending = ledger.with_suffix(".pending")
+    if link_kind == "symlink":
+        pending.symlink_to(sentinel)
+    else:
+        pending.hardlink_to(sentinel)
+
+    def handler(request):
+        reservation = json.loads(ledger.read_text())
+        assert reservation[0]["status"] == "pending"
+        assert ledger.stat().st_mode & 0o777 == 0o600
+        return httpx.Response(200, json={"model": "fixture", "answers": {"q": {"type": "noul", "noul": 1}},
+                                        "usage": {"input_tokens": 17, "output_tokens": 2}})
+
+    client = e.SessionClient("fake", ledger, transport=httpx.MockTransport(handler))
+    client.ask({}, {"q": {"type": "noul", "instructions": "test"}})
+    assert sentinel.read_bytes() == b"do not overwrite"
+    assert sentinel.stat().st_mode & 0o777 == 0o640
+    assert pending.samefile(sentinel)
+    assert json.loads(ledger.read_text())[0]["usage"]["input_tokens"] == 17
+    assert ledger.stat().st_mode & 0o777 == 0o600
+    assert set(tmp_path.iterdir()) == {ledger, sentinel, pending}
+
+
 def test_labeled_cli_option_preserves_exact_raw_packet(tmp_path):
     source = tmp_path / "f.md"
     source.write_text("hello\n")

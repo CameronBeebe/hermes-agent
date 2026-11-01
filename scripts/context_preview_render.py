@@ -1,4 +1,5 @@
 """Pure, script-free HTML views for saved context maps. All evidence is untrusted."""
+import hashlib
 import html
 import json
 
@@ -70,6 +71,8 @@ def region_html(row, index):
 def validate_correspondence(result):
     """Reject stale/tampered slices instead of presenting invented provenance."""
     source = result['source']
+    if 'sha256' in result and result['sha256'] != hashlib.sha256(source.encode('utf-8')).hexdigest():
+        raise ValueError('source_correspondence')
     cursor = 0
     for row in result['regions']:
         start, end = row['start'], row['end']
@@ -81,6 +84,10 @@ def validate_correspondence(result):
                 or row['column_start'] != start - source.rfind('\n', 0, start)
                 or row['column_end'] != end - source.rfind('\n', 0, end - 1)):
             raise ValueError('source_correspondence')
+        for field, offset in (('byte_start', start), ('byte_end', end)):
+            if field in row and (type(row[field]) is not int
+                                 or row[field] != len(source[:offset].encode('utf-8'))):
+                raise ValueError('source_correspondence')
         cursor = end
     packet = ''.join(r['text'] for r in result['regions'] if r['selected'])
     if cursor != len(source) or result['packet'] != packet:

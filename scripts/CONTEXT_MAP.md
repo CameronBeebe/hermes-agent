@@ -79,7 +79,9 @@ Markdown ATX headings plus a character ceiling (default 700) are not a full pars
 uses equal-character partitions. Every character is covered exactly once. Character offsets are
 zero-based half-open; UTF-8 byte offsets refer to original source; lines/columns are one-based,
 end column exclusive. CRLF is preserved in downloads. Rendering validates source slices,
-coordinates and packet correspondence; corrupted saved provenance is rejected.
+coordinates and packet correspondence, plus SHA-256 and UTF-8 byte offsets when present;
+corrupted saved provenance is rejected. Older maps without these optional metadata fields
+remain readable; absent fields are not independently verified.
 
 Direct asks readable evidence and concrete task relevance. Enriched adds prerequisite, exception,
 instruction and neighbor signals. Positive threshold is `>= .8`; `.2 < p < .8` on active selection
@@ -117,6 +119,10 @@ For an explicitly authorized four-arm experiment, the existing runner remains av
 
 Reuse the **same ledger** across authorized invocations: 35 requests / 500,000 accounted input
 tokens, in addition to unchanged per-invocation caps. Do not reset a ledger to evade budgets.
+Keep the ledger in a private, trusted parent directory. Updates use private, exclusively
+created same-directory temporary files and atomic replacement, never a predictable `.pending`
+file. Use one process at a time. After a crash, remove a stale `.lock` only after confirming
+no process is using the ledger; preserve the ledger and its pending reservations.
 For the public enriched arm, `--batch-regions 6` avoids the original 12-region payload refusal;
 this is a disclosed protocol intervention, not a clean replicate. Oracles are saved before
 classification and never exported. `context-map-demo.sh` remains the legacy tiny-battery runner.

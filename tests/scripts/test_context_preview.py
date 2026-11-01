@@ -2,6 +2,8 @@
 from html.parser import HTMLParser
 import json
 
+import pytest
+
 from scripts import context_map as m
 
 
@@ -79,6 +81,46 @@ def test_corrupt_source_correspondence_is_rejected_before_creating_report(tmp_pa
     with pytest.raises(ValueError, match='source_correspondence'):
         m.save_report(tmp_path / 'bad', result)
     assert not (tmp_path / 'bad').exists()
+
+
+@pytest.mark.parametrize('digest', ['0' * 64, 'not-a-sha256', '', None, 123, False, []])
+def test_malformed_stored_sha_is_rejected_before_creating_report(tmp_path, digest):
+    result = sample()
+    result['sha256'] = digest
+    with pytest.raises(ValueError, match='source_correspondence'):
+        m.save_report(tmp_path / 'bad', result)
+    assert not (tmp_path / 'bad').exists()
+
+
+@pytest.mark.parametrize('field', ['byte_start', 'byte_end'])
+@pytest.mark.parametrize('malformed', ['negative', 'out_of_range', 'null', 'string', 'bool', 'float', 'character_offset'])
+def test_malformed_stored_byte_offsets_are_rejected_before_creating_report(tmp_path, field, malformed):
+    result = sample()
+    row = result['regions'][0 if malformed == 'bool' else 2]
+    row[field] = {'negative': -1, 'out_of_range': 10000, 'null': None,
+                  'string': str(row[field]), 'bool': False, 'float': float(row[field]),
+                  'character_offset': row[field.removeprefix('byte_')]}[malformed]
+    with pytest.raises(ValueError, match='source_correspondence'):
+        m.save_report(tmp_path / 'bad', result)
+    assert not (tmp_path / 'bad').exists()
+
+
+@pytest.mark.parametrize('text', ['', '# Unicode\r\né🙂\r\n# Next\r\n終\r\n'])
+@pytest.mark.parametrize('metadata', ['complete', 'absent'])
+def test_valid_utf8_provenance_and_legacy_missing_metadata_round_trip(tmp_path, text, metadata):
+    from scripts.context_preview import refresh
+
+    result = m.map_source('guide.md', text, 'Find evidence', 'Check exceptions', m.OfflineClient(''))
+    if metadata == 'absent':
+        result.pop('sha256')
+        for row in result['regions']:
+            row.pop('byte_start')
+            row.pop('byte_end')
+    m.save_report(tmp_path / 'out', result)
+    before = (tmp_path / 'out/map.json').read_bytes()
+    assert refresh(tmp_path / 'out') == 1
+    assert (tmp_path / 'out/map.json').read_bytes() == before
+    assert (tmp_path / 'out/source.txt').read_bytes() == text.encode('utf-8')
 
 
 def test_source_line_links_resolve_for_crlf_unicode_and_empty_source(tmp_path):

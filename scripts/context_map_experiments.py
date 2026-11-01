@@ -1,9 +1,9 @@
 """Small reproducible ablations; not connected to the live context engine."""
 import json
-import os
 from pathlib import Path
 
 from scripts import context_map as m
+from scripts.context_preview import private_write
 
 
 class SessionClient(m.Client):
@@ -45,11 +45,7 @@ class SessionClient(m.Client):
             self._save(records)
 
     def _save(self, records):
-        temp = self.ledger.with_suffix(".pending")
-        with temp.open("w", encoding="utf-8") as handle:
-            os.chmod(temp, 0o600)
-            json.dump(records, handle, indent=2)
-        temp.replace(self.ledger)
+        private_write(self.ledger, json.dumps(records, indent=2))
 
 
 
